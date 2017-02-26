@@ -23,10 +23,17 @@
 <script lang="ts">
 import * as Vue from 'vue';
 import { Component } from 'vue-property-decorator';
+import {db} from '../server';
 
 @Component
 export default class Hello extends Vue {
   msg: string = 'Welcome to your Vue.js with TypeScript App';
+
+  created() {
+    console.log("created");
+
+    db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));
+  }
 }
 
 </script>
