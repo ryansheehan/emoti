@@ -23,7 +23,7 @@
 <script lang="ts">
 import * as Vue from 'vue';
 import { Component } from 'vue-property-decorator';
-import {db} from '../server';
+import {dataService} from '../server/database.service';
 
 @Component
 export default class Hello extends Vue {
@@ -32,7 +32,9 @@ export default class Hello extends Vue {
   created() {
     console.log("created");
 
-    db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));
+    //db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));
+    dataService.getDataBlock()
+      .then(values=>console.log(values));
   }
 }
 

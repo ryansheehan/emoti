@@ -1,5 +1,9 @@
-import {initializeApp} from 'firebase';
+import {initializeApp, auth} from 'firebase';
+import 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
 
+// App initialization
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyC135_nGDK-X6nNAExvMx0mmhR4z_wWX1Y",
   authDomain: "emotivent.firebaseapp.com",
@@ -8,6 +12,7 @@ const firebaseApp = initializeApp({
   //messagingSenderId: "<SENDER_ID>"
 }, "emotivent");
 
-const db = firebaseApp.database();
 
-export { db };
+// Database
+export const db = firebaseApp.database();
+
