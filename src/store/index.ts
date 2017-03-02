@@ -1,6 +1,8 @@
 import * as Vue from 'vue';
 import * as Vuex from 'vuex';
 import {StoreOptions, MutationTree} from 'vuex';
+import { AuthModule } from './auth.store';
+
 
 Vue.use(Vuex);
 
@@ -26,5 +28,9 @@ const store = new Vuex.Store({
   }
 });
 
+console.log(store);
+
+const auth = new AuthModule(store, 'auth');
+store.registerModule('auth', auth);
 
 export default store;

@@ -29,9 +29,7 @@ import {dataService} from '../server/database.service';
 export default class Hello extends Vue {
   msg: string = 'Welcome to your Vue.js with TypeScript App';
 
-  created() {
-    console.log("created");
-
+  created() {    
     //db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));
     dataService.getDataBlock()
       .then(values=>console.log(values));

@@ -1,4 +1,4 @@
-import {initializeApp, auth} from 'firebase';
+import {initializeApp} from 'firebase';
 import 'firebase/app';
 import 'firebase/database';
 import 'firebase/auth';
@@ -12,7 +12,7 @@ const firebaseApp = initializeApp({
   //messagingSenderId: "<SENDER_ID>"
 }, "emotivent");
 
-
 // Database
 export const db = firebaseApp.database();
+export const auth = firebaseApp.auth();
 
