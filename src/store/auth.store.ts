@@ -10,15 +10,6 @@ interface IUser {
     photoURL: string | null;
 }
 
-class User implements IUser {
-    get displayName() { return this._user.displayName; }
-    get email() { return this._user.email; }
-    get photoURL() { return this._user.photoURL; }
-    constructor(private _user: fbUser) {
-
-    }
-}
-
 interface IAuthState {
     currentUser: IUser | null;
 }
@@ -39,16 +30,22 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     }
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider) => {
-            return auth
-            .signInWithRedirect(this._authProviders[provider])
-            .then(() => {
-                console.log(`Redirecting to login for ${provider}`);
-            })
-            .catch((error: Error) => {
-                console.log("Sign-In Error!");
-                console.log(error.message);
-            });
+        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|IUser|null) => {            
+            if(provider instanceof String) {
+                return auth
+                .signInWithRedirect(this._authProviders[provider])
+                .then(() => {
+                    console.log(`Redirecting to login for ${provider}`);
+                })
+                .catch((error: Error) => {
+                    console.log("Sign-In Error!");
+                    console.log(error.message);
+                });
+            } else {
+                if(provider !== null) {
+                    context.commit(AuthModule.login, provider);
+                } //else ignore
+            }
         },
 
         [AuthModule.logout]: (context: Vuex.ActionContext<IAuthState, RootState>) => {
@@ -68,10 +65,10 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
     }
 
-    constructor(store: Vuex.Store<RootState>, ns: string = '', defaultState: IAuthState = { currentUser: null }) {
-        auth.onAuthStateChanged((user:fbUser)=>{
-            const _ns = ns ? `${ns}/${AuthModule.login}` : AuthModule.login;
-            store.commit(_ns, user ? new User(user) : null);
+    constructor(store: Vuex.Store<RootState>, defaultState: IAuthState = { currentUser: null }) {
+        this.state = defaultState;
+        auth.onAuthStateChanged((user:fbUser)=>{                        
+            store.dispatch(AuthModule.login, user);
         });
         auth.getRedirectResult();
     }
