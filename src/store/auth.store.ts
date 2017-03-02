@@ -68,9 +68,10 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
     }
 
-    constructor(store: Vuex.Store<RootState>, ns: string, defaultState: IAuthState = { currentUser: null }) {        
+    constructor(store: Vuex.Store<RootState>, ns: string = '', defaultState: IAuthState = { currentUser: null }) {
         auth.onAuthStateChanged((user:fbUser)=>{
-            store.commit(`${AuthModule.login}`, user ? new User(user) : null);
+            const _ns = ns ? `${ns}/${AuthModule.login}` : AuthModule.login;
+            store.commit(_ns, user ? new User(user) : null);
         });
         auth.getRedirectResult();
     }

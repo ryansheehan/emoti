@@ -14,13 +14,13 @@ import Counter from '../components/counter.component.vue';
 })
 export default class CounterLayout extends Vue {
   get value() {
-    return this.$store.state.count
+    return this.$store.state.counter.count
   }
   increment() {
     this.$store.dispatch('increment');
   }
   decrement() {
-    this.$store.dispatch('decrement');
+    this.$store.dispatch('counter/decrement');
   }
 }
 </script>
