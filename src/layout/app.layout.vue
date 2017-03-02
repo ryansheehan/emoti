@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import * as Vue from 'vue';
+import Vue from 'vue';
 import Component from 'vue-class-component';
 import Login from '../components/login.component.vue';
 import {Provider, IUser} from '../store/auth.store';
