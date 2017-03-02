@@ -7,14 +7,14 @@ import { CounterModule } from './counter.store';
 
 Vue.use(Vuex);
 
-const store = new Vuex.Store({
+interface IRootState {
+}
+
+const store = new Vuex.Store<IRootState>({
     modules: {
-        'counter': new CounterModule()
+        counter: new CounterModule<IRootState>()
     }
 });
-
-// const counter = new CounterModule();
-// store.registerModule(['counter'], counter);
 
 const auth = new AuthModule(store);
 store.registerModule(['auth'], auth);

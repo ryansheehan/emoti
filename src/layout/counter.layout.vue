@@ -20,7 +20,7 @@ export default class CounterLayout extends Vue {
     this.$store.dispatch('increment');
   }
   decrement() {
-    this.$store.dispatch('counter/decrement');
+    this.$store.dispatch('decrement');
   }
 }
 </script>
