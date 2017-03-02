@@ -30,8 +30,8 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     }
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|IUser|null) => {            
-            if(provider instanceof String) {
+        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser|null) => {                
+            if(typeof provider === 'string') {
                 return auth
                 .signInWithRedirect(this._authProviders[provider])
                 .then(() => {
