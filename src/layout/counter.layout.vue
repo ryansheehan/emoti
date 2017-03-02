@@ -22,6 +22,8 @@ export default class CounterLayout extends Vue {
   decrement() {
     this.$store.dispatch('decrement');
   }
+
+  
 }
 </script>
 

@@ -1,6 +1,6 @@
 import { auth as fbAuth, User as fbUser } from 'firebase';
 import { auth } from '../server/firebase.config';
-import * as Vuex from 'vuex';
+import Vuex from 'vuex';;
 
 type Provider = "google";
 
