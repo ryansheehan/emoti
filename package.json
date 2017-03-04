@@ -12,13 +12,15 @@
     "tsc:noEmit": "npm run tsc -- --noEmit"
   },
   "dependencies": {
-    "firebase": "^3.7.0",   
+    "emojione": "^2.2.7",
+    "firebase": "^3.7.0",
     "vue": "^2.2.1",
-    "vue-router": "^2.3.0",    
+    "vue-router": "^2.3.0",
     "vuex": "^2.2.1",
     "vuex-router-sync": "^4.1.2"
   },
   "devDependencies": {
+    "@types/emojione": "^2.2.0",
     "autoprefixer": "^6.7.2",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
