@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Counter :value="value" :increment="increment" :decrement="decrement"></Counter>
+    <counter :value="value" :increment="increment" :decrement="decrement"></counter>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default class CounterLayout extends Vue {
     this.$store.dispatch('decrement');
   }
 
-  
+
 }
 </script>
 
