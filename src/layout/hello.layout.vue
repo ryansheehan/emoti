@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <div>
+      <emoji :shortname="emojiCode" />
+    </div>
     <h2>Essential Links</h2>
     <ul>
       <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
@@ -24,10 +27,13 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import {dataService} from '../server/database.service';
+import Emoji from '../components/emoji.component.vue';
 
-@Component
+@Component({components: {Emoji}})
 export default class Hello extends Vue {
   msg: string = 'Welcome to your Vue.js with TypeScript App';
+
+  emojiCode: string = ":smile:";
 
   created() {    
     //db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));

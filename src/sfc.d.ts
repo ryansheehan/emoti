@@ -3,6 +3,10 @@ declare module "*.vue" {
   export default typeof Vue
 }
 
+declare module "emojione" {
+  export function shortnameToUnicode(shortname:string):string;
+}
+
 declare module "vuefire" {
   import * as _Vue from 'vue';
   import {
