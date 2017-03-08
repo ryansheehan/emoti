@@ -1,20 +1,15 @@
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
-import { IUser, AuthModule } from '../store/auth.store';
+import {Provider, IUser, AuthModule} from '../store/auth.store';
 
 @Component
 export default class Login extends Vue {
-  @Prop({required: true})
-  user: IUser;  
+    login(provider: Provider | string):Promise<any> {
+        console.log("signing in with google");
+        return this.$store.dispatch('login', provider);
+    }
 
-  @Prop({required: true})
-  login: (provider:string)=>Promise<any>;
-
-  @Prop({required: true})
-  logout: ()=>Promise<any>;
-
-  loginGoogle() {
-    //console.log("Login w/ google");
-    this.login(AuthModule.provider.google);
-  }
+    loginGoogle() {
+        this.login(AuthModule.provider.google);
+    }
 }

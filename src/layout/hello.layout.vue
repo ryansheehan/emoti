@@ -2,7 +2,8 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <div>
-      <emoji :shortname="emojiCode" />
+        <md-button class="md-raised md-primary">Primary</md-button>
+        <emoji :shortname="emojiCode" />
     </div>
     <h2>Essential Links</h2>
     <ul>
@@ -35,7 +36,7 @@ export default class Hello extends Vue {
 
   emojiCode: string = ":smile:";
 
-  created() {    
+  created() {
     //db.ref('dataBlocks').once("value").then(snapshot=>console.log(snapshot.val()));
     dataService.getDataBlock()
       .then(values=>console.log(values));

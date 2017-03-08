@@ -1,3 +1,5 @@
+<script src="./counter.component.ts" lang="ts"></script>
+
 <template>
   <div>
     <button @click="decrement">-</button>
@@ -5,8 +7,6 @@
     <button @click="increment">+</button>
   </div>
 </template>
-
-<script src="./counter.component.ts" lang="ts"></script>
 
 <style scoped>
 
