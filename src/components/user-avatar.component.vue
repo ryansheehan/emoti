@@ -15,7 +15,7 @@
                 <div class="user-card-info">
                     <span>{{displayName}}</span>
                     <div class="user-card-links">
-                        <md-button @click.native="test()">Sign out</md-button>
+                        <md-button @click.native="logout()">Sign out</md-button>
                     </div>
                 </div>
             </div>

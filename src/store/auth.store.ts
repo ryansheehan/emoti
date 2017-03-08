@@ -1,5 +1,6 @@
 import { auth as fbAuth, User as fbUser } from 'firebase';
 import { auth } from '../server/firebase.config';
+import router from '../router';
 import Vuex from 'vuex';;
 
 type Provider = "google";
@@ -28,11 +29,11 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     state: IAuthState;
 
     getters: Vuex.GetterTree<IAuthState, RootState> = {
-        isAuthenticated: (state: IAuthState):boolean => state.currentUser != null,
+        isAuthenticated: (state: IAuthState):Promise<boolean> => this._authStatePromise.then(()=> state.currentUser != null),
     }
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser|null) => {                
+        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser|null) => {
             if(typeof provider === 'string') {
                 return auth
                 .signInWithRedirect(this._authProviders[provider])
@@ -53,7 +54,10 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         [AuthModule.logout]: (context: Vuex.ActionContext<IAuthState, RootState>) => {
             return auth
             .signOut()
-            .then(() => context.commit(AuthModule.logout))
+            .then(() => {
+                context.commit(AuthModule.logout);
+                router.push({name: 'login'});
+            })
             .catch(error => console.log(`Logout Error: ${error.message}`));
         }
     };
@@ -67,11 +71,17 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
     }
 
+    private _authStatePromise:Promise<any>;
+
     constructor(store: Vuex.Store<RootState>, defaultState: IAuthState = { currentUser: null }) {
         this.state = defaultState;
-        auth.onAuthStateChanged((user:fbUser)=>{                        
-            store.dispatch(AuthModule.login, user);
-        });
+        this._authStatePromise = new Promise<any>((resolve, reject)=> {
+            auth.onAuthStateChanged((user:fbUser)=>{
+                store.dispatch(AuthModule.login, user);
+                resolve(user);
+            });
+        })
+
         auth.getRedirectResult();
     }
 }

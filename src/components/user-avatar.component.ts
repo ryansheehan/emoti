@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
-import { IUser, AuthModule } from '../store/auth.store';
+import { IUser } from '../store/auth.store';
 
 @Component
 export default class UserAvatar extends Vue {
@@ -11,15 +11,5 @@ export default class UserAvatar extends Vue {
   get displayName() { return this.user ? this.user.displayName : ""; }
 
   @Prop({required: true})
-  login: (provider:string)=>Promise<any>;
-
-  @Prop({required: true})
   logout: ()=>Promise<any>;
-
-  loginGoogle() {
-    //console.log("Login w/ google");
-    this.login(AuthModule.provider.google);
-  }
-
-  test() { console.log("logout"); }
 }

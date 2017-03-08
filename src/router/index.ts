@@ -26,9 +26,11 @@ const router = new Router({
         name: 'login',
         component: Login,
         beforeEnter(to, from, next) {
-            if(store.getters.isAuthenticated) {
-                router.push('home');
-            }
+            return store.getters.isAuthenticated.then((authenticated:boolean)=>{
+                if(authenticated) {
+                    next({name: 'home'});
+                }
+            });
         }
     }
   ]
@@ -36,12 +38,15 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {
-    if(!store.getters.isAuthenticated) {
-        console.log(store.getters.isAuthenticated);
-        console.log(to, from);
-      console.warn('Route requires authentication and user is not authenticated.  set meta: { requiresAuth: false}');
-      return next('/login');
-    }
+    return store.getters.isAuthenticated.then((authenticated:boolean) => {
+        if(authenticated) {
+            console.log(`User is authorized for ${to.name}.`);
+            next();
+        } else {
+            console.warn(`Route ${to.name} requires authentication and user is not authenticated.  set meta: { requiresAuth: false}`);
+            next({name: 'login'});
+        }
+    });
   }
   next();
 })
