@@ -5,6 +5,9 @@ import Vuex from 'vuex';;
 
 type Provider = "google";
 
+const authenticationStatus:string = "authenticationStatus";
+type AuthenticationState = "undetermined" | "authenticated" | "logging-out" | "anonymous";
+
 interface IUser {
     displayName: string | null;
     email: string | null;
@@ -14,6 +17,7 @@ interface IUser {
 }
 
 interface IAuthState {
+    authenticationStatus: AuthenticationState;
     currentUser: IUser | null;
 }
 
@@ -22,65 +26,71 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     static readonly logout = "logout";
 
     static readonly provider = {
-        get google() { return "google"; }
-    }
+        get google():string { return "google"; }
+    };
 
     namespaced: true;
     state: IAuthState;
 
     getters: Vuex.GetterTree<IAuthState, RootState> = {
-        isAuthenticated: (state: IAuthState):Promise<boolean> => this._authStatePromise.then(()=> state.currentUser != null),
+        isAuthenticated: (state:IAuthState):boolean => state.authenticationStatus === "authenticated",
+        isAnonymous: (state:IAuthState):boolean => state.authenticationStatus === "anonymous",
     }
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser|null) => {
-            if(typeof provider === 'string') {
+        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser) => {
+            if(typeof provider === "string") {
+                context.commit(authenticationStatus, "undetermined");
                 return auth
                 .signInWithRedirect(this._authProviders[provider])
                 .then(() => {
                     console.log(`Redirecting to login for ${provider}`);
                 })
                 .catch((error: Error) => {
-                    console.log("Sign-In Error!");
-                    console.log(error.message);
+                    console.error("Sign-In Error!");
+                    console.error(error.message);
                 });
             } else {
-                if(provider !== null) {
+                if(provider) {
                     context.commit(AuthModule.login, provider);
-                } //else ignore
+                    context.commit(authenticationStatus, "authenticated");
+                }
             }
         },
 
         [AuthModule.logout]: (context: Vuex.ActionContext<IAuthState, RootState>) => {
+            context.commit(authenticationStatus, "logging-out");
             return auth
             .signOut()
             .then(() => {
                 context.commit(AuthModule.logout);
-                router.push({name: 'login'});
+                context.commit(authenticationStatus, "anonymous");
+                router.push({name: "login"});
             })
             .catch(error => console.log(`Logout Error: ${error.message}`));
         }
     };
 
     mutations: Vuex.MutationTree<IAuthState> = {
+        [authenticationStatus]: (state: IAuthState, authStatus:AuthenticationState) => state.authenticationStatus = authStatus,
         [AuthModule.login]: (state: IAuthState, user: IUser) => state.currentUser = user,
         [AuthModule.logout]: (state: IAuthState) => state.currentUser = null,
-    }
+    };
 
     private _authProviders = {
         [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
-    }
+    };
 
-    private _authStatePromise:Promise<any>;
-
-    constructor(store: Vuex.Store<RootState>, defaultState: IAuthState = { currentUser: null }) {
+    constructor(store: Vuex.Store<RootState>, defaultState: IAuthState = { currentUser: null, authenticationStatus: "undetermined" }) {
         this.state = defaultState;
-        this._authStatePromise = new Promise<any>((resolve, reject)=> {
-            auth.onAuthStateChanged((user:fbUser)=>{
+
+        auth.onAuthStateChanged((user:fbUser)=> {
+            if(user) {
                 store.dispatch(AuthModule.login, user);
-                resolve(user);
-            });
-        })
+            } else {
+                store.dispatch(AuthModule.logout);
+            }
+        });
 
         auth.getRedirectResult();
     }

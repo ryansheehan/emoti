@@ -1,13 +1,15 @@
-import Vue from 'vue';
-import Vuex from 'vuex';;
-import {StoreOptions, MutationTree} from 'vuex';
-import { AuthModule } from './auth.store';
-import { CounterModule } from './counter.store';
+import Vue from "vue";
+import Vuex from "vuex";;
+import { AuthModule, IAuthState } from "./auth.store";
+import { CounterModule } from "./counter.store";
 
 
 Vue.use(Vuex);
 
+const auth: string = "auth";
+
 interface IRootState {
+    auth: IAuthState;
 }
 
 const store = new Vuex.Store<IRootState>({
@@ -16,7 +18,7 @@ const store = new Vuex.Store<IRootState>({
     }
 });
 
-const auth = new AuthModule(store);
-store.registerModule(['auth'], auth);
+const authModule: AuthModule<IRootState> = new AuthModule(store);
+store.registerModule([auth], authModule);
 
 export default store;

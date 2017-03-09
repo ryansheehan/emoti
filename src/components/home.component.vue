@@ -9,7 +9,7 @@
 
         <h2 class="md-title" style="flex: 1">Emotivent</h2>
 
-        <user-avatar :user="currentUser" :login="login" :logout="logout"/>
+        <user-avatar :user="currentUser" :logout="logout"/>
     </md-toolbar>
   </div>
 </template>

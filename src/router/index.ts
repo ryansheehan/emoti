@@ -7,7 +7,7 @@ import Login from "../components/login.component.vue";
 
 Vue.use(Router);
 
-const router = new Router({
+const router: Router = new Router({
   routes: [
     {
       path: "/",
@@ -24,24 +24,41 @@ const router = new Router({
         name: "login",
         component: Login,
         beforeEnter(to: Router.Route, from: Router.Route, next: (to?:Router.RawLocation)=>any): any {
-            return store.getters.isAuthenticated.then((authenticated:boolean)=> {
-                if(authenticated) {
-                    return next({name: "home"});
+            waitForAuthenticationStatus().then(()=>{
+                if(store.getters.isAuthenticated) {
+                    next({name: "home"});
+                } else {
+                    next();
                 }
-                return next();
             });
         }
     }
   ]
 });
 
+
+function waitForAuthenticationStatus(pollTime:number = 100):Promise<any> {
+    return new Promise<any>((resolve, reject)=> {
+        function _wait():void {
+            if(store.state.auth.authenticationStatus === "undetermined") {
+                setTimeout(_wait, pollTime);
+            } else {
+                resolve();
+            }
+        }
+
+        _wait();
+    });
+}
+
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        return store.getters.isAuthenticated.then((authenticated: boolean) => {
-            if(authenticated) {
-                return next();
+        waitForAuthenticationStatus().then(()=>{
+            if(store.getters.isAuthenticated) {
+                next();
+            } else {
+                next({name: "login"});
             }
-            return next({name: "login"});
         });
     }
     return next();
