@@ -15,9 +15,9 @@ export default class Home extends Vue {
     return this.$store.state.auth.currentUser;
   }
   login(provider: Provider):Promise<any> {
-    return this.$store.dispatch('login', provider);
+    return this.$store.dispatch('auth/login', provider);
   }
   logout():Promise<any> {
-    return this.$store.dispatch('logout');
+    return this.$store.dispatch('auth/logout');
   }
 }

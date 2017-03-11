@@ -1,7 +1,7 @@
 import { auth as fbAuth, User as fbUser } from 'firebase';
 import { auth } from '../server/firebase.config';
 import router from '../router';
-import Vuex from 'vuex';;
+import Vuex from 'vuex';
 
 type Provider = "google";
 
@@ -29,7 +29,7 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         get google():string { return "google"; }
     };
 
-    namespaced: true;
+    namespaced:boolean = true;
     state: IAuthState;
 
     getters: Vuex.GetterTree<IAuthState, RootState> = {
@@ -81,14 +81,14 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
         [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
     };
 
-    constructor(store: Vuex.Store<RootState>, defaultState: IAuthState = { currentUser: null, authenticationStatus: "undetermined" }) {
+    constructor(store: Vuex.Store<RootState>, ns: string[] = [], defaultState: IAuthState = { currentUser: null, authenticationStatus: "undetermined" }) {
         this.state = defaultState;
 
         auth.onAuthStateChanged((user:fbUser)=> {
             if(user) {
-                store.dispatch(AuthModule.login, user);
+                store.commit([...ns, AuthModule.login].join("/"), user);
             } else {
-                store.dispatch(AuthModule.logout);
+                store.commit([...ns, AuthModule.logout].join("/"));
             }
         });
 

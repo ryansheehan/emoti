@@ -6,7 +6,7 @@ import {Provider, IUser, AuthModule} from '../store/auth.store';
 export default class Login extends Vue {
     login(provider: Provider | string):Promise<any> {
         console.log("signing in with google");
-        return this.$store.dispatch('login', provider);
+        return this.$store.dispatch('auth/login', provider);
     }
 
     loginGoogle() {

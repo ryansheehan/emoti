@@ -25,12 +25,12 @@ const router: Router = new Router({
         component: Login,
         beforeEnter(to: Router.Route, from: Router.Route, next: (to?:Router.RawLocation)=>any): any {
             waitForAuthenticationStatus().then(()=>{
-                if(store.getters.isAuthenticated) {
+                if(store.getters['auth/isAuthenticated']) {
                     next({name: "home"});
                 } else {
                     next();
                 }
-            });
+             });
         }
     }
   ]
