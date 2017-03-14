@@ -18,7 +18,7 @@ interface IEventRange {
 
 class EmotiState {
     committedEventIds: string[] = [];
-    events: { [uid:string]:IEventRange} = {};
+    events: { [uid:string]:IEventRange } = {};
 }
 
 interface IEmotiState extends EmotiState {
@@ -33,7 +33,8 @@ class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
 
     namespaced: boolean = true;
 
-    _emotionsRef: fbdb.Reference;
+    private _emotionsRef: fbdb.Reference;
+    private _listeners: any;
 
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
         [EmotiModule.create]: ({commit}, event: IEmotivent): Promise<string|null>  => {
@@ -55,7 +56,17 @@ class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
 
         [EmotiModule.watchUid]: ({commit}, uid:string): Promise<any> => {
             return new Promise<any>((resolve, reject)=>{
-
+                console.log("EmotModule.watchUid", uid);
+                if(uid) {
+                    this._emotionsRef
+                    .orderByChild("uid")
+                    .equalTo(uid)
+                    .on("child_added", (snapshot:fbdb.DataSnapshot, prevKey: string) => {
+                        console.log(snapshot.val());
+                        console.log(prevKey);
+                        console.log("################");
+                    });
+                }
             });
         }
     };

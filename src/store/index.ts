@@ -25,4 +25,4 @@ const store = new Vuex.Store<IRootState>({
 const authModule: AuthModule<IRootState> = new AuthModule(store, ["auth"]);
 store.registerModule([auth], authModule);
 
-export default store;
+export {store as default, IRootState};
