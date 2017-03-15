@@ -10,13 +10,12 @@ interface IEmotivent {
 }
 
 interface IEventRange {
-    start: number;
-    count : number;
     events: IEmotivent[];
 }
 
 
 class EmotiState {
+    userUid: string | null;
     committedEventIds: string[] = [];
     events: { [uid:string]:IEventRange } = {};
 }
@@ -28,22 +27,40 @@ interface IEmotiState extends EmotiState {
 class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
 
     static readonly create = "create";
-    static readonly updateEvents = "updateEvents";
+    static readonly addEvent = "addEvent";
     static readonly watchUid = "watchUid";
+    static readonly setUserUid = "setUserUid";
 
     namespaced: boolean = true;
 
     private _emotionsRef: fbdb.Reference;
     private _listeners: any;
 
+    getters: Vuex.GetterTree<IEmotiState, RootState> = {
+        userEvents: (state:IEmotiState): IEmotivent[] => {
+            if(state.userUid) {
+                return state.events[state.userUid].events;
+            }
+            return [];
+        }
+    }
+
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
+        [EmotiModule.setUserUid]: ({commit, dispatch}, uid:string | null): Promise<any> => {
+            commit(EmotiModule.setUserUid, uid);
+            if(uid) {
+                return dispatch(EmotiModule.watchUid, uid);
+            }
+            return new Promise<any>((resolve, reject)=>{});
+        },
+
         [EmotiModule.create]: ({commit}, event: IEmotivent): Promise<string|null>  => {
             return new Promise<string | null>((resolve, reject)=> {
                 const ref: fbdb.ThenableReference =  this._emotionsRef.push(event)
 
                 .then(()=>{
                     const key: string | null = ref.key;
-                    commit(EmotiModule.create);
+                    commit(EmotiModule.create, key);
                     resolve(key);
                 })
 
@@ -54,17 +71,19 @@ class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
             });
         },
 
-        [EmotiModule.watchUid]: ({commit}, uid:string): Promise<any> => {
+        [EmotiModule.watchUid]: ({commit, state}, uid:string | null): Promise<any> => {
             return new Promise<any>((resolve, reject)=>{
-                console.log("EmotModule.watchUid", uid);
-                if(uid) {
+                if(uid && (!(uid in state.events))) {
                     this._emotionsRef
                     .orderByChild("uid")
                     .equalTo(uid)
                     .on("child_added", (snapshot:fbdb.DataSnapshot, prevKey: string) => {
-                        console.log(snapshot.val());
-                        console.log(prevKey);
-                        console.log("################");
+                        if(this.state) {
+                            const event: IEmotivent = snapshot.val();
+                            if(event) {
+                                commit(EmotiModule.addEvent, event);
+                            }
+                        }
                     });
                 }
             });
@@ -72,13 +91,32 @@ class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
     };
 
     mutations: Vuex.MutationTree<IEmotiState> = {
+        [EmotiModule.setUserUid]: (state: IEmotiState, uid: string | null): void => {
+            if(uid) {
+                state.userUid = uid;
+            } else {
+                const uids = Object.keys(state.events);
+                uids.forEach(value => {
+                    this._emotionsRef
+                    .orderByChild("uid")
+                    .equalTo(value)
+                    .off("child_added");
+                });
+                state.events= {};
+            }
+        },
+
         [EmotiModule.create]: (state: IEmotiState, eventId: string): void => {
             state.committedEventIds.push(eventId);
         },
 
-        // [EmotiModule.updateEvents]: (state: IEmotiState, events:IEmotivent[]): void =>{
-        //     state.events = events;
-        // },
+        [EmotiModule.addEvent]: (state:IEmotiState, event:IEmotivent): void => {
+            const {uid} = event;
+            if(!(uid in state.events)) {
+                state.events[uid] = { events: [] };
+            }
+            state.events[uid].events.push(event);
+        }
     };
 
     constructor(private db: fbdb.Database, public state?:IEmotiState) {

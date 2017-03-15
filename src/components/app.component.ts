@@ -11,11 +11,9 @@ export default class App extends Vue {
         }
 
         const handler = (value:string|null, oldValue:string|null): void => {
-            console.log("login changed!");
-            this.$store.dispatch("emoti/watchUid", value);
+            this.$store.dispatch("emoti/setUserUid", value);
         }
 
-        console.log("setting watch!");
         this.$store.watch(getState, handler);
     }
 }
