@@ -86,9 +86,9 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
 
         auth.onAuthStateChanged((user:fbUser)=> {
             if(user) {
-                store.commit([...ns, AuthModule.login].join("/"), user);
+                store.dispatch([...ns, AuthModule.login].join("/"), user);
             } else {
-                store.commit([...ns, AuthModule.logout].join("/"));
+                store.dispatch([...ns, AuthModule.logout].join("/"));
             }
         });
 

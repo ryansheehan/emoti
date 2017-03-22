@@ -13,6 +13,7 @@
             <user-avatar :user="currentUser" :logout="logout"/>
         </md-toolbar>
         <event-entry></event-entry>
+        <event-view v-for="emoti in emotivents" :key="emoti.datetime" :emotivent="emoti"></event-view>
     </div>
 </template>
 

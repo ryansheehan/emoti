@@ -2,7 +2,7 @@
 
 <template>
   <md-whiteframe md-elevation="3">
-      Event View 2
+      Event View 2 {{emotivent.response}}
   </md-whiteframe>
 </template>
 

@@ -53,8 +53,8 @@ function waitForAuthenticationStatus(pollTime:number = 100):Promise<any> {
 
 router.beforeEach((to, from, next) => {
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        waitForAuthenticationStatus().then(()=>{
-            if(store.getters.isAuthenticated) {
+        return waitForAuthenticationStatus().then(()=>{
+            if(store.getters["auth/isAuthenticated"]) {
                 next();
             } else {
                 next({name: "login"});
