@@ -1,7 +1,6 @@
-import { auth as fbAuth, User as fbUser } from 'firebase';
-import { auth } from '../server/firebase.config';
-import router from '../router';
-import Vuex from 'vuex';
+import { auth as fbAuth, User as fbUser } from "firebase";
+import { auth } from "../server/firebase.config";
+import Vuex from "vuex";
 
 interface IUser {
     displayName: string | null;
@@ -53,11 +52,14 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
             }
         },
 
-        [AuthModule.login]: ({commit, getters}, provider:string):void => {
+        [AuthModule.login]: ({getters}, provider:string):void => {
             if(getters.isAnonymous) {
                 if(provider) {
                     switch(provider) {
                         case "google":
+                        case "facebook":
+                        case "twitter":
+                        // case "github":
                         auth.signInWithRedirect(this._authProviders[provider]);
                         break;
                     }
@@ -69,20 +71,20 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
             }
         },
 
-        [AuthModule.getRedirectStatus]: ({commit, state, dispatch}):Promise<any> => {
-            return new Promise<any>((resolve, reject)=> {
-                if(state.authenticationStatus == "unchecked") {
+        [AuthModule.getRedirectStatus]: ({commit, state}):Promise<string> => {
+            return new Promise<string>((resolve, reject)=> {
+                if(state.authenticationStatus === "unchecked") {
                     commit(AuthModule.setAuthStatus, "checking");
                     auth.getRedirectResult()
-                    .then((user:fbAuth.UserCredential)=> {
-                        console.log("user", user ? "user.displayName" : "null");
-                        commit(AuthModule.login, user);
-                        if(user) {
+                    .then((userCredential:fbAuth.UserCredential)=> {
+                        commit(AuthModule.login, userCredential.user);
+                        if(userCredential.user) {
                             commit(AuthModule.setAuthStatus, "authenticated");
+                            resolve("authenticated");
                         } else {
                             commit(AuthModule.setAuthStatus, "anonymous");
+                            resolve("anonymous");
                         }
-                        resolve();
                     })
                     .catch((e)=>{
                         commit(AuthModule.setAuthStatus, "unchecked");
