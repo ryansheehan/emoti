@@ -1,19 +1,21 @@
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
-import { IRootState } from '../store';
+//import { IRootState } from '../store';
+import {AuthModule} from '../store/auth.store';
+import router from '../router';
 
 
 @Component
 export default class App extends Vue {
+    isLoaded: boolean = false;
+
     created() {
-        const getState = (state:IRootState):string|null => {
-           return state.auth.currentUser ? state.auth.currentUser.uid : null;
-        }
+        this.$store.dispatch(AuthModule.getRedirectStatus)
 
-        const handler = (value:string|null, oldValue:string|null): void => {
-            this.$store.dispatch("emoti/setUserUid", value);
-        }
-
-        this.$store.watch(getState, handler);
+        .then(()=>{
+            this.isLoaded = true;
+            router.push({name: "home"});
+        })
+        .catch(e=>console.error(e));
     }
 }

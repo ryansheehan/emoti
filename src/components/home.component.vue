@@ -10,7 +10,7 @@
 
             <h2 class="md-title" style="flex: 1">Emotivent</h2>
 
-            <user-avatar :user="currentUser" :logout="logout"/>
+            <user-avatar :user="$store.state.auth.currentUser" :logout="logout"/>
         </md-toolbar>
         <event-entry></event-entry>
         <event-view v-for="emoti in emotivents" :key="emoti.datetime" :emotivent="emoti"></event-view>

@@ -6,7 +6,8 @@
       <router-link :to="{ name: 'hello' }">Hello</router-link>
       <router-link :to="{ name: 'counter' }">Counter</router-link>
     </div>-->
-    <router-view></router-view>
+    <router-view v-if="isLoaded"/>
+    <md-spinner v-else :md-size="150" md-indeterminate/>
   </div>
 </template>
 
