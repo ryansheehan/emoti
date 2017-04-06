@@ -17,6 +17,8 @@ interface IAuthState {
     currentUser: IUser | null;
 }
 
+const defaultAuthState:IAuthState = {authenticationStatus:"unchecked", currentUser: null};
+
 class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     static readonly getRedirectStatus = "getRedirectStatus";
     static readonly setAuthStatus = "setAuthStatus";
@@ -52,23 +54,24 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
             }
         },
 
-        [AuthModule.login]: ({getters}, provider:string):void => {
-            if(getters.isAnonymous) {
-                if(provider) {
-                    switch(provider) {
-                        case "google":
-                        case "facebook":
-                        case "twitter":
-                        // case "github":
-                        auth.signInWithRedirect(this._authProviders[provider]);
-                        break;
+        [AuthModule.login]: ({getters}, provider:string):Promise<any> => {
+            return new Promise<any>((resolve, reject)=> {
+                if(getters.isAnonymous) {
+                    if(provider) {
+                        switch(provider) {
+                            case "google":
+                            case "facebook":
+                            case "twitter":
+                            // case "github":
+                            return auth.signInWithRedirect(this._authProviders[provider]);
+                        }
+                    } else {
+                        reject(`"${provider}" is an invalid login provider`);
                     }
                 } else {
-                    console.error(`"${provider}" is an invalid login provider`);
+                    reject(`Only anonymous users can login`);
                 }
-            } else {
-                console.error(`Only anonymous users can login`);
-            }
+            });
         },
 
         [AuthModule.getRedirectStatus]: ({commit, state}):Promise<string> => {
@@ -118,8 +121,8 @@ class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     }
 
     constructor(defaultState: IAuthState|null = null) {
-        this.state = defaultState || {authenticationStatus:"unchecked", currentUser: null};
+        this.state = defaultState || defaultAuthState;
     }
 }
 
-export {AuthModule, IAuthState, IUser}
+export {AuthModule, IAuthState, IUser, defaultAuthState}

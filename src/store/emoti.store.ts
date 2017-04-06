@@ -17,12 +17,14 @@ interface IEventRange {
 class EmotiState {
     userUid: string | null;
     committedEventIds: string[] = [];
-    events: { [uid:string]:IEventRange } = {};
+    events: { [uid:string]: IEventRange } = {};
 }
 
 interface IEmotiState extends EmotiState {
 
 }
+
+const defaultEmotiState = new EmotiState();
 
 class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
 
@@ -120,10 +122,12 @@ class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
     };
 
     constructor(private db: fbdb.Database, public state?:IEmotiState) {
-        if(!this.state) this.state = new EmotiState();
+        if(!this.state) {
+            this.state = defaultEmotiState;
+        }
 
         this._emotionsRef = db.ref("emotions/");
     }
 }
 
-export {EmotiModule, IEmotiState, IEmotivent};
+export {EmotiModule, IEmotiState, IEmotivent, defaultEmotiState};

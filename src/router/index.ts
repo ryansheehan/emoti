@@ -23,19 +23,12 @@ const router: Router = new Router({
         path: "/login",
         name: "login",
         component: Login,
-        // beforeEnter(to: Router.Route, from: Router.Route, next: (to?:Router.RawLocation)=>any): any {
-        //     waitForAuthenticationStatus().then(()=>{
-        //         if(store.getters.isAuthenticated) {
-        //             next({name: "home"});
-        //         } else {
-        //             next();
-        //         }
-        //      });
-        // }
         beforeEnter: (to: Router.Route, from: Router.Route, next: (to?:Router.RawLocation)=>any): any => {
             if(store.getters.isAuthenticated) {
+                console.log("here 1");
                 next({name: "home"});
             } else {
+                console.log("here 2");
                 next();
             }
         }
@@ -43,38 +36,21 @@ const router: Router = new Router({
   ]
 });
 
-
-// function waitForAuthenticationStatus(pollTime:number = 100):Promise<any> {
-//     return new Promise<any>((resolve, reject)=> {
-//         function _wait():void {
-//             if(store.state.auth.authenticationStatus === "undetermined") {
-//                 setTimeout(_wait, pollTime);
-//             } else {
-//                 resolve();
-//             }
-//         }
-
-//         _wait();
-//     });
-// }
-
 router.beforeEach((to, from, next) => {
+    console.log("going to ", to);
+    console.log("status:", store.state.auth.authenticationStatus);
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        // return waitForAuthenticationStatus().then(()=>{
-        //     if(store.getters["auth/isAuthenticated"]) {
-        //         next();
-        //     } else {
-        //         next({name: "login"});
-        //     }
-        // });
-
         if(!store.getters.isAuthenticated) {
+            console.log("here 3");
             next();
         } else {
+            console.log("here 4");
             next({name: "login"});
         }
+    } else {
+        console.log("here 5");
+        return next();
     }
-    return next();
 })
 
 export default router;
