@@ -9,7 +9,6 @@ import { db } from "../server/firebase.config";
 Vue.use(Vuex);
 
 interface IRootState {
-    isLoaded: boolean;
     auth: IAuthState;
     emoti: IEmotiState;
 }
@@ -18,21 +17,8 @@ const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
     strict: true,
 
     state: {
-        isLoaded: false,
         auth: defaultAuthState,
         emoti: defaultEmotiState,
-    },
-
-    actions: {
-        "SetLoaded": ({commit}, loaded:boolean):void => {
-            commit("SetLoaded", loaded);
-        }
-    },
-
-    mutations: {
-        "SetLoaded": (state:IRootState, loaded:boolean):void => {
-            state.isLoaded = loaded;
-        }
     },
 
     modules: {
@@ -41,6 +27,7 @@ const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
         emoti: new EmotiModule(db)
     }
 });
+
 
 // const authModule: AuthModule<IRootState> = new AuthModule(store, ["auth"]);
 // store.registerModule([auth], authModule);

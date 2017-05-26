@@ -1,28 +1,18 @@
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 import {AuthModule} from "../store/auth.store";
 import router from "../router";
 
 
 @Component
 export default class App extends Vue {
-    get isLoaded():boolean { return this.$store.state.isLoaded; }
-
+    get isLoaded():boolean { return this.$store.getters.isInitialized; }
     created():void {
-        if(!this.isLoaded) {
-            this.$store.dispatch(AuthModule.getRedirectStatus)
-            .then((status: any)=>{
-                const authStatus:string = this.$store.state.auth.authenticationStatus;
-                if(authStatus !== "unchecked" && authStatus !== "checking") {
-                    this.$store.dispatch("SetLoaded", true);
-                    if(status === "authenticated") {
-                        router.push({name: "home"});
-                    } else {
-                        router.push({name: "login"});
-                    }
-                }
-            })
-            .catch(e=>console.error(e));
-        }
+        this.$store.dispatch(AuthModule.initialize)
+        .then(()=> {
+            console.log("app going home");
+            router.push({name: "home"});
+        })
+        .catch(e=>console.error(e));
     }
 }

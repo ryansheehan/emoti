@@ -24,31 +24,32 @@ const router: Router = new Router({
         name: "login",
         component: Login,
         beforeEnter: (to: Router.Route, from: Router.Route, next: (to?:Router.RawLocation)=>any): any => {
-            if(store.getters.isAuthenticated) {
-                console.log("here 1");
-                next({name: "home"});
-            } else {
-                console.log("here 2");
-                next();
-            }
+            console.log("before promise");
+            store.getters.initializedPromise.then(()=> {
+                console.log("in promise");
+                if(store.getters.isAuthenticated) {
+                    console.log("login home");
+                    next({name: "home"});
+                } else {
+                    console.log("login continue");
+                    next();
+                }
+            });
         }
     }
   ]
 });
 
 router.beforeEach((to, from, next) => {
-    console.log("going to ", to);
-    console.log("status:", store.state.auth.authenticationStatus);
     if(to.matched.some(record => record.meta.requiresAuth)) {
-        if(!store.getters.isAuthenticated) {
-            console.log("here 3");
-            next();
-        } else {
-            console.log("here 4");
-            next({name: "login"});
-        }
+        store.getters.initializedPromise.then(()=> {
+            if(store.getters.isAuthenticated) {
+                next();
+            } else {
+                next({name: "login"});
+            }
+        });
     } else {
-        console.log("here 5");
         return next();
     }
 })
