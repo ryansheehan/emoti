@@ -2,22 +2,20 @@
 
 <template>
   <div id="app">
-    <!--<div>
-      <router-link :to="{ name: 'hello' }">Hello</router-link>
-      <router-link :to="{ name: 'counter' }">Counter</router-link>
-    </div>-->
-    <router-view v-if="isLoaded"/>
-    <md-spinner v-else :md-size="150" md-indeterminate/>
+    <omnibar></omnibar>
+    <router-view v-if="!isPending"/>
+    <md-spinner class="app-loading-spinner" v-else :md-size="150" md-indeterminate/>
   </div>
 </template>
 
 <style scoped>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;  
+  flex: auto;  
+  flex-flow: column nowrap;
+}
+
+.app-loading-spinner {
+  align-self: center;
 }
 </style>

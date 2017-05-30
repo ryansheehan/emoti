@@ -1,18 +1,21 @@
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import {AuthModule} from "../store/auth.store";
-import router from "../router";
+import Omnibar from "./omnibar.component.vue";
+import { mapGetters } from "vuex";
 
-
-@Component
+@Component({
+    components: {
+        Omnibar
+    },
+    computed: {
+        ...mapGetters("auth", ["isPending"])
+    }
+})
 export default class App extends Vue {
-    get isLoaded():boolean { return this.$store.getters.isInitialized; }
-    created():void {
-        this.$store.dispatch(AuthModule.initialize)
-        .then(()=> {
-            console.log("app going home");
-            router.push({name: "home"});
-        })
-        .catch(e=>console.error(e));
+    // get isInitialized():boolean {
+    //     return !this.$store.getters["auth/isPending"];
+    // }
+    async created():Promise<any> {
+        await this.$store.dispatch("auth/initAuthStatus");
     }
 }
