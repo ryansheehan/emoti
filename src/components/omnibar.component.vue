@@ -6,7 +6,12 @@
         <md-icon>menu</md-icon>
     </md-button>
     <h2 class="md-title">Emotivent</h2>
-    <user-avatar v-if="isAuthenticated" imageUrl="https://www.gravatar.com/avatar/559b2e9fe5620de0994a0de5180cd6eb"></user-avatar>    
+    <md-menu md-align-trigger v-if="isAuthenticated">
+            <user-avatar md-menu-trigger imageUrl="https://www.gravatar.com/avatar/559b2e9fe5620de0994a0de5180cd6eb"></user-avatar>    
+            <md-menu-content>
+                <md-menu-item @selected="logout()">Logout</md-menu-item>
+            </md-menu-content>
+        </md-menu>
   </md-toolbar>
 </template>
 

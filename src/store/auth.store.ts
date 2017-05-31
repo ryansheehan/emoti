@@ -29,7 +29,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
     }
 
     state:IAuthState = {
-        authStatus: "unauthenticated",
+        authStatus: "undefined",
         user: null,
         initialized: false
     }
@@ -51,17 +51,18 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
     actions: Vuex.ActionTree<IAuthState, RootState> = {
         initAuthStatus: async ({commit, state}):Promise<any> => {
             commit("setAuthStatus", "pending");
-            try{
+            try {
                 const authResult:fbAuth.UserCredential = await auth.getRedirectResult();
                 if(authResult && authResult.user) {
-                    commit("setUser", authResult.user);
+                    const {displayName, email, photoURL, providerId, uid} = authResult.user;
+                    commit("setUser", {displayName, email, photoURL, providerId, uid});
                     commit("setAuthStatus", "authenticated");
                 } else {
                     commit("setAuthStatus", "unauthenticated");
                 }
                 commit("setInitialized");
             } catch(error) {
-                console.error("Auth init error");
+                console.error("Auth init error", error);
                 commit("setAuthStatus", "unauthenticated");
             }
         },
@@ -79,6 +80,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
         },
 
         logout: async ({getters, commit}):Promise<any> => {
+            console.log("logout action");
             if(getters.isAuthenticated) {
                 commit("setAuthStatus", "pending");
                 try {
