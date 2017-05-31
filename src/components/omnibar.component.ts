@@ -1,15 +1,15 @@
 import Vue from "vue";
 import { Component } from "./vue-class-helpers";
-import UserAvatar from "./user-avatar.component.vue";
+import LoginAvatar from "./login-avatar.component.vue";
 import { mapActions, mapGetters } from "vuex";
 
 @Component({
     components: {
-        UserAvatar
+        LoginAvatar
     },
 
     computed: {
-        ...mapGetters("auth", ["isAuthenticated"])
+        ...mapGetters("auth", ["isAuthenticated", "isPending"])
     },
 
     methods: {

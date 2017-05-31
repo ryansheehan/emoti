@@ -7,14 +7,8 @@ import { mapGetters } from "vuex";
     components: {
         Omnibar
     },
-    computed: {
-        ...mapGetters("auth", ["isPending"])
-    }
 })
 export default class App extends Vue {
-    // get isInitialized():boolean {
-    //     return !this.$store.getters["auth/isPending"];
-    // }
     async created():Promise<any> {
         await this.$store.dispatch("auth/initAuthStatus");
     }

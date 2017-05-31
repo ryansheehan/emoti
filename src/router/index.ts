@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Login from "../components/login.component.vue";
+import Test from "../components/test.component.vue";
 
 
 Vue.use(Router);
@@ -9,7 +10,8 @@ const router: Router = new Router({
   routes: [
     {
       path: "/",
-      redirect: { name: "login" }
+      component: Test
+      //redirect: { name: "login" }
     },
     // {
     //   path: "/home",
