@@ -6,20 +6,19 @@ import { AuthModule, IAuthState } from "./auth.store";
 Vue.use(Vuex);
 
 interface IRootState {
-    auth: IAuthState;
-
+    auth?: IAuthState;
 }
 
 const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
     strict: true,
 
-    state: {
-        auth: {
-            authState: "unauthenticated",
-            user: null,
-            initialized: false
-        },
-    },
+    // state: {
+    //     auth: {
+    //         authStatus: "undefined",
+    //         user: null,
+    //         initialized: false
+    //     },
+    // },
 
     modules: {
         // counter: new CounterModule<IRootState>(),

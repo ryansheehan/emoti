@@ -10,8 +10,8 @@
 
 <style scoped>
 #app {
-  display: flex;  
-  flex: auto;  
+  display: flex;
+  flex: auto;
   flex-flow: column nowrap;
 }
 

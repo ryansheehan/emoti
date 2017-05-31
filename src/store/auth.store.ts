@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface IAuthState {
-    authState: string;
+    authStatus: string;
     user: IUser | null;
     initialized: boolean;
 }
@@ -28,39 +28,41 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
         return this.firebaseLogin(provider);
     }
 
+    state:IAuthState = {
+        authStatus: "unauthenticated",
+        user: null,
+        initialized: false
+    }
+
     getters:Vuex.GetterTree<IAuthState, RootState> = {
-        isAuthenticated: (state:IAuthState):boolean => {
-            return state.authState === "authenticated" && state.initialized;
+        isAuthenticated(state:IAuthState):boolean {
+            return state.authStatus === "authenticated" && state.initialized;
         },
 
-        isPending: (state:IAuthState):boolean => {
-            return state.authState === "pending" || !state.initialized;
+        isPending(state:IAuthState):boolean {
+            return state.authStatus === "pending" || !state.initialized;
         },
 
-        isUnauthenticated: (state:IAuthState):boolean => {
-            return state.authState === "unauthenticated" && state.initialized;
+        isUnauthenticated(state:IAuthState):boolean {
+            return state.authStatus === "unauthenticated" && state.initialized;
         }
     };
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
         initAuthStatus: async ({commit, state}):Promise<any> => {
-            if(!state.initialized) {
-                commit("setAuthStatus", "pending");
-                try {
-                    const authResult:fbAuth.UserCredential = await auth.getRedirectResult();
-                    if(authResult && authResult.user) {
-                        commit("setUser", authResult.user);
-                        commit("setAuthStatus", "authenticated");
-                    } else {
-                        commit("setAuthStatus", "unauthenticated");
-                    }
-                    commit("setInitialized");
-                } catch(exception) {
-                    console.error("Login Error");
+            commit("setAuthStatus", "pending");
+            try{
+                const authResult:fbAuth.UserCredential = await auth.getRedirectResult();
+                if(authResult && authResult.user) {
+                    commit("setUser", authResult.user);
+                    commit("setAuthStatus", "authenticated");
+                } else {
                     commit("setAuthStatus", "unauthenticated");
                 }
-            } else {
-                console.warn("Authentication system already initialized");
+                commit("setInitialized");
+            } catch(error) {
+                console.error("Auth init error");
+                commit("setAuthStatus", "unauthenticated");
             }
         },
 
@@ -84,16 +86,16 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
                 } catch(error) {
                     console.error("Error logging out, forcing logout");
                 }
-                commit("setAuthStatus", "unauthenticated");
-                commit("setUser", null);
             }
+            commit("setAuthStatus", "unauthenticated");
+            commit("setUser", null);
         }
     };
 
     mutations: Vuex.MutationTree<IAuthState> = {
         setAuthStatus: (state:IAuthState, authStatus: string) => {
-            console.log(`authStatus = ${authStatus}`);
-            state.authState = authStatus;
+            console.log(`authStatus = ${state.authStatus} => ${authStatus}`);
+            state.authStatus = authStatus;
         },
 
         setUser: (state:IAuthState, user: IUser | null) => {

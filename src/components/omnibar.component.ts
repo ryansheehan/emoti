@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component } from "./vue-class-helpers";
 import UserAvatar from "./user-avatar.component.vue";
 
 @Component({
