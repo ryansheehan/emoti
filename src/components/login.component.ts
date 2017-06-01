@@ -1,15 +1,19 @@
-import Vue from 'vue';
-import { Component, Prop } from 'vue-property-decorator';
-import {Provider, IUser, AuthModule} from '../store/auth.store';
+import Vue from "vue";
+import { Component, mapActions, mapGetters, mapState, Watch } from "./vue-class-helpers";
 
-@Component
-export default class Login extends Vue {
-    login(provider: Provider | string):Promise<any> {
-        console.log("signing in with google");
-        return this.$store.dispatch('auth/login', provider);
+@Component({
+    methods: {
+        ...mapActions("auth", ["login"])
+    },
+
+    computed: {
+        ...mapGetters("auth", ["isUnauthenticated", "isPending", "isAuthenticated"]),
+        ...mapState("auth", ["user"])
     }
-
-    loginGoogle() {
-        this.login(AuthModule.provider.google);
+})
+export default class Login extends Vue {
+    @Watch("isAuthenticated")
+    onIsAuthenticatedChanged(val: boolean, oldValue: boolean) {
+        this.$router.replace("/");
     }
 }

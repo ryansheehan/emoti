@@ -1,19 +1,15 @@
-import Vue from 'vue';
-import { Component, Prop } from 'vue-property-decorator';
-import { IRootState } from '../store';
+import Vue from "vue";
+import { Component } from "./vue-class-helpers";
+import Omnibar from "./omnibar.component.vue";
+import { mapGetters } from "vuex";
 
-
-@Component
+@Component({
+    components: {
+        Omnibar
+    },
+})
 export default class App extends Vue {
-    created() {
-        const getState = (state:IRootState):string|null => {
-           return state.auth.currentUser ? state.auth.currentUser.uid : null;
-        }
-
-        const handler = (value:string|null, oldValue:string|null): void => {
-            this.$store.dispatch("emoti/setUserUid", value);
-        }
-
-        this.$store.watch(getState, handler);
+    async created():Promise<any> {
+        await this.$store.dispatch("auth/initAuthStatus");
     }
 }

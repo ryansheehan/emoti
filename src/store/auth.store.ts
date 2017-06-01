@@ -1,14 +1,8 @@
-import { auth as fbAuth, User as fbUser } from 'firebase';
-import { auth } from '../server/firebase.config';
-import router from '../router';
-import Vuex from 'vuex';
+import { auth as fbAuth } from "firebase";
+import { auth } from "../server/firebase.config";
+import Vuex from "vuex";
 
-type Provider = "google";
-
-const authenticationStatus:string = "authenticationStatus";
-type AuthenticationState = "undetermined" | "authenticated" | "logging-out" | "anonymous";
-
-interface IUser {
+export interface IUser {
     displayName: string | null;
     email: string | null;
     photoURL: string | null;
@@ -16,84 +10,101 @@ interface IUser {
     uid: string;
 }
 
-interface IAuthState {
-    authenticationStatus: AuthenticationState;
-    currentUser: IUser | null;
+export interface IAuthState {
+    authStatus: string;
+    user: IUser | null;
+    initialized: boolean;
 }
 
-class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
-    static readonly login = "login";
-    static readonly logout = "logout";
-
-    static readonly provider = {
-        get google():string { return "google"; }
-    };
-
+export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     namespaced:boolean = true;
-    state: IAuthState;
 
-    getters: Vuex.GetterTree<IAuthState, RootState> = {
-        isAuthenticated: (state:IAuthState):boolean => state.authenticationStatus === "authenticated",
-        isAnonymous: (state:IAuthState):boolean => state.authenticationStatus === "anonymous",
+    private firebaseLogin(provider: fbAuth.AuthProvider): Promise<any> {
+        return auth.signInWithRedirect(provider);
     }
 
+    private LoginGoogle(): Promise<any> {
+        const provider:fbAuth.GoogleAuthProvider = new fbAuth.GoogleAuthProvider();
+        return this.firebaseLogin(provider);
+    }
+
+    state:IAuthState = {
+        authStatus: "undefined",
+        user: null,
+        initialized: false
+    }
+
+    getters:Vuex.GetterTree<IAuthState, RootState> = {
+        isAuthenticated(state:IAuthState):boolean {
+            return state.authStatus === "authenticated" && state.initialized;
+        },
+
+        isPending(state:IAuthState):boolean {
+            return state.authStatus === "pending" || !state.initialized;
+        },
+
+        isUnauthenticated(state:IAuthState):boolean {
+            return state.authStatus === "unauthenticated" && state.initialized;
+        }
+    };
+
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        [AuthModule.login]: (context: Vuex.ActionContext<IAuthState, RootState>, provider: Provider|string|IUser) => {
-            if(typeof provider === "string") {
-                context.commit(authenticationStatus, "undetermined");
-                return auth
-                .signInWithRedirect(this._authProviders[provider])
-                .then(() => {
-                    console.log(`Redirecting to login for ${provider}`);
-                })
-                .catch((error: Error) => {
-                    console.error("Sign-In Error!");
-                    console.error(error.message);
-                });
+        initAuthStatus: async ({commit, state}):Promise<any> => {
+            commit("setAuthStatus", "pending");
+            try {
+                const authResult:fbAuth.UserCredential = await auth.getRedirectResult();
+                if(authResult && authResult.user) {
+                    const {displayName, email, photoURL, providerId, uid} = authResult.user;
+                    commit("setUser", {displayName, email, photoURL, providerId, uid});
+                    commit("setAuthStatus", "authenticated");
+                } else {
+                    commit("setAuthStatus", "unauthenticated");
+                }
+                commit("setInitialized");
+            } catch(error) {
+                console.error("Auth init error", error);
+                commit("setAuthStatus", "unauthenticated");
+            }
+        },
+
+        login: ({getters, commit}, provider: string):Promise<any> => {
+            if(getters.isAuthenticated) {
+                throw new Error("User is already authenticated");
             } else {
-                if(provider) {
-                    context.commit(AuthModule.login, provider);
-                    context.commit(authenticationStatus, "authenticated");
+                commit("setAuthStatus", "pending");
+                switch(provider) {
+                    case "google": return this.LoginGoogle();
+                    default: throw new Error(`${provider} is not a valid identity provider`);
                 }
             }
         },
 
-        [AuthModule.logout]: (context: Vuex.ActionContext<IAuthState, RootState>) => {
-            context.commit(authenticationStatus, "logging-out");
-            return auth
-            .signOut()
-            .then(() => {
-                context.commit(AuthModule.logout);
-                context.commit(authenticationStatus, "anonymous");
-                router.push({name: "login"});
-            })
-            .catch(error => console.log(`Logout Error: ${error.message}`));
+        logout: async ({getters, commit}):Promise<any> => {
+            console.log("logout action");
+            if(getters.isAuthenticated) {
+                commit("setAuthStatus", "pending");
+                try {
+                    await auth.signOut();
+                } catch(error) {
+                    console.error("Error logging out, forcing logout");
+                }
+            }
+            commit("setAuthStatus", "unauthenticated");
+            commit("setUser", null);
         }
     };
 
     mutations: Vuex.MutationTree<IAuthState> = {
-        [authenticationStatus]: (state: IAuthState, authStatus:AuthenticationState) => state.authenticationStatus = authStatus,
-        [AuthModule.login]: (state: IAuthState, user: IUser) => state.currentUser = user,
-        [AuthModule.logout]: (state: IAuthState) => state.currentUser = null,
+        setAuthStatus: (state:IAuthState, authStatus: string) => {
+            state.authStatus = authStatus;
+        },
+
+        setUser: (state:IAuthState, user: IUser | null) => {
+            state.user = user;
+        },
+
+        setInitialized: (state:IAuthState) => {
+            state.initialized = true;
+        }
     };
-
-    private _authProviders = {
-        [AuthModule.provider.google]: new fbAuth.GoogleAuthProvider(),
-    };
-
-    constructor(store: Vuex.Store<RootState>, ns: string[] = [], defaultState: IAuthState = { currentUser: null, authenticationStatus: "undetermined" }) {
-        this.state = defaultState;
-
-        auth.onAuthStateChanged((user:fbUser)=> {
-            if(user) {
-                store.dispatch([...ns, AuthModule.login].join("/"), user);
-            } else {
-                store.dispatch([...ns, AuthModule.logout].join("/"));
-            }
-        });
-
-        auth.getRedirectResult();
-    }
 }
-
-export {AuthModule, IAuthState, IUser, Provider};

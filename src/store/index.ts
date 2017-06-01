@@ -1,28 +1,30 @@
 import Vue from "vue";
 import Vuex from "vuex";;
 import { AuthModule, IAuthState } from "./auth.store";
-import { EmotiModule, IEmotiState } from "./emoti.store";
-import { CounterModule } from "./counter.store";
-import { db } from '../server/firebase.config';
 
 
 Vue.use(Vuex);
 
-const auth: string = "auth";
-
 interface IRootState {
-    auth: IAuthState;
-    emoti: IEmotiState;
+    auth?: IAuthState;
 }
 
-const store = new Vuex.Store<IRootState>({
+const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
+    strict: true,
+
+    // state: {
+    //     auth: {
+    //         authStatus: "undefined",
+    //         user: null,
+    //         initialized: false
+    //     },
+    // },
+
     modules: {
-        counter: new CounterModule<IRootState>(),
-        emoti: new EmotiModule(db)
+        // counter: new CounterModule<IRootState>(),
+        auth: new AuthModule<IRootState>(),
     }
 });
 
-const authModule: AuthModule<IRootState> = new AuthModule(store, ["auth"]);
-store.registerModule([auth], authModule);
 
 export {store as default, IRootState};
