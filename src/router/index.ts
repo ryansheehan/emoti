@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Login from "../components/login.component.vue";
-import Test from "../components/test.component.vue";
+import EmotiEntry from "../components/emote-entry.component.vue";
 import store from "../store";
 import { IAuthState } from "../store/auth.store";
 
@@ -13,14 +13,14 @@ const router: Router = new Router({
     routes: [
         {
             path: "/",
-            component: Test
+            component: EmotiEntry
         },
         {
             path: "/login",
             name: "login",
             component: Login,
             beforeEnter: (to: Router.Route, from: Router.Route, next: (to?: Router.RawLocation) => any): any => {
-                const state = <IAuthState>store.state.auth;
+                const state:IAuthState = <IAuthState>store.state.auth;
                 if (state.authStatus === "authenticated") {
                     next("/");
                 } else {

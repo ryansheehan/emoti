@@ -52,7 +52,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
     };
 
     actions: Vuex.ActionTree<IAuthState, RootState> = {
-        initAuthStatus: async ({commit, state}):Promise<any> => {
+        initAuthStatus: async ({commit}):Promise<any> => {
             commit("setAuthStatus", "pending");
             try {
                 const authResult:fbaseAuth.UserCredential = await auth.getRedirectResult();

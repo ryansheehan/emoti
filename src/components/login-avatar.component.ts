@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Component, mapActions, mapGetters, mapState } from "./vue-class-helpers";
-import { IAuthState } from "../store/auth.store"
+import { IAuthState } from "../store/auth.store";
 
 @Component({
     methods: {
