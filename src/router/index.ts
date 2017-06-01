@@ -28,6 +28,10 @@ const router: Router = new Router({
                 }
             }
         },
+        {
+            path: "*",
+            redirect: "/"
+        }
     ]
 });
 

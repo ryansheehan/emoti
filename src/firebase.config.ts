@@ -1,6 +1,4 @@
 import * as firebase from 'firebase/app';
-// import 'firebase/database';
-// import 'firebase/auth';
 
 // App initialization
 const firebaseApp: firebase.app.App = firebase.initializeApp({
@@ -13,7 +11,4 @@ const firebaseApp: firebase.app.App = firebase.initializeApp({
 
 export default firebaseApp;
 
-// Database
-//export const db = firebaseApp.database();
-//export const auth = firebaseApp.auth();
 
