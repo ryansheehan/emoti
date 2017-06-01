@@ -12,14 +12,6 @@ interface IRootState {
 const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
     strict: true,
 
-    // state: {
-    //     auth: {
-    //         authStatus: "undefined",
-    //         user: null,
-    //         initialized: false
-    //     },
-    // },
-
     modules: {
         // counter: new CounterModule<IRootState>(),
         auth: new AuthModule<IRootState>(),

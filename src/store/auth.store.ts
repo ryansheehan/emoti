@@ -1,6 +1,9 @@
-import { auth as fbAuth } from "firebase";
-import { auth } from "../server/firebase.config";
+import { auth as fbaseAuth } from "firebase";
+import 'firebase/auth';
+import firebaseApp from "../firebase.config";
 import Vuex from "vuex";
+
+const auth:fbaseAuth.Auth = firebaseApp.auth();
 
 export interface IUser {
     displayName: string | null;
@@ -19,12 +22,12 @@ export interface IAuthState {
 export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     namespaced:boolean = true;
 
-    private firebaseLogin(provider: fbAuth.AuthProvider): Promise<any> {
+    private firebaseLogin(provider: fbaseAuth.AuthProvider): Promise<any> {
         return auth.signInWithRedirect(provider);
     }
 
     private LoginGoogle(): Promise<any> {
-        const provider:fbAuth.GoogleAuthProvider = new fbAuth.GoogleAuthProvider();
+        const provider:fbaseAuth.GoogleAuthProvider = new fbaseAuth.GoogleAuthProvider();
         return this.firebaseLogin(provider);
     }
 
@@ -52,7 +55,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
         initAuthStatus: async ({commit, state}):Promise<any> => {
             commit("setAuthStatus", "pending");
             try {
-                const authResult:fbAuth.UserCredential = await auth.getRedirectResult();
+                const authResult:fbaseAuth.UserCredential = await auth.getRedirectResult();
                 if(authResult && authResult.user) {
                     const {displayName, email, photoURL, providerId, uid} = authResult.user;
                     commit("setUser", {displayName, email, photoURL, providerId, uid});
