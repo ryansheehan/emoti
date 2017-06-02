@@ -3,6 +3,15 @@ declare module "*.vue" {
   export default typeof Vue
 }
 
+declare module "*.json" {
+    const value: any;
+    export default value;
+}
+
+declare module "debounce" {
+    export function debounce<A extends Function>(f: A, interval?: number, immediate?: boolean): A & { clear(): void; };
+}
+
 declare module "emojione" {
   export let emojiVersion:string;
   export let emojiSize:string;
