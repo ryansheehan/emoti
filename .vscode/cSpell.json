@@ -9,7 +9,10 @@
         "Emoti",
         "Emotivent",
         "Omnibar",
-        "emotis"
+        "emotis",
+        "shortcode",
+        "shortname",
+        "emojione"
     ],
     // flagWords - list of words to be always considered incorrect
     // This is useful for offensive words and common spelling errors.

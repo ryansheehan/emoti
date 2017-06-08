@@ -2,9 +2,9 @@
 
 <template>
   <md-toolbar class="em-toolbar md-dense">
-    <md-button v-show="false" class="md-icon-button">
+    <!--<md-button v-show="false" class="md-icon-button">
         <md-icon>menu</md-icon>
-    </md-button>
+    </md-button>-->
     <h2 class="md-title">Emotivent</h2>
     <login-avatar></login-avatar>
   </md-toolbar>
@@ -18,7 +18,7 @@
     }
     .em-toolbar h2 {
         flex: 1;
-        text-align: center;
+        text-align: start;
     }
 </style>
 <!-- https://www.gravatar.com/avatar/559b2e9fe5620de0994a0de5180cd6eb -->
