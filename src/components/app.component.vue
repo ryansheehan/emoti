@@ -3,14 +3,14 @@
 <template>
   <div id="app">
     <omnibar></omnibar>
-    <router-view/>    
+    <router-view/>
   </div>
 </template>
 
 <style scoped>
 #app {
   display: flex;
-  flex: auto;
   flex-flow: column nowrap;
+  height: 100vh;
 }
 </style>

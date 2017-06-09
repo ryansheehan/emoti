@@ -3,7 +3,11 @@ import { Component, mapActions, mapGetters, mapState, NoCache } from "./vue-clas
 import { IEmoti } from "../store/emoti.store";
 import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
+import { Map, TileLayer } from "vue2-leaflet";
 import emojiTable from "../emoji-table";
+import { getCurrentLocation } from "../location";
+import { Location } from "geofire";
+
 
 // import * as emojione from "emojione";
 
@@ -13,7 +17,9 @@ import emojiTable from "../emoji-table";
 
 @Component({
     components: {
-        EmojiPicker
+        EmojiPicker,
+        "v-map": Map,
+        "v-tilelayer": TileLayer
     },
 
     methods: {
@@ -42,9 +48,15 @@ export default class EmoteEntry extends Vue {
 
     uid:string;
 
+    currentLocation: Location;
+
     // used in the template
     // tslint:disable-next-line:no-unused-variable
     private emojiOptions: { [shortname: string]: string } =  // emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
+
+    created():void {
+        (async ():Promise<any> => this.currentLocation = await getCurrentLocation())();
+    }
 }

@@ -3,6 +3,7 @@ import {sync} from "vuex-router-sync";
 
 import VueMaterial from "vue-material";
 import "vue-material/dist/vue-material.css";
+import "leaflet/dist/leaflet.css";
 
 import App from "./components/app.component.vue";
 

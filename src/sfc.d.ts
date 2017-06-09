@@ -8,6 +8,24 @@ declare module "*.json" {
     export default value;
 }
 
+declare module "vue2-leaflet" {
+    export class GeoJSON {}
+    export class IconDefault {}
+    export class LayerGroup {}
+    export class LCircle {}
+    export class Map {}
+    export class Marker {}
+    export class Polygon {}
+    export class Polyline {}
+    export class Popup {}
+    export class Rectangle {}
+    export class TileLayer {}
+    export class Tooltip {}
+    export class WMSTileLayer {}
+    export class WMSTileLayers {}
+    export class ImageOverlay {}
+}
+
 declare module "geofire" {
     import { database } from "firebase";
 
