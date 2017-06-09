@@ -1,5 +1,6 @@
 import Vue from "vue";
-import { Component, mapActions } from "./vue-class-helpers";
+import { Component, mapActions, Prop } from "./vue-class-helpers";
+import EmojiPicker from "./emoji-picker.component.vue";
 import emojiTable from "../emoji-table";
 // import * as emojione from "emojione";
 
@@ -9,25 +10,22 @@ import emojiTable from "../emoji-table";
 
 @Component({
     components: {
-
+        EmojiPicker
     },
 
     methods: {
         ...mapActions("emoti", ["post"])
-    }
+    },
 })
 export default class EmoteEntry extends Vue {
-    emote: string = emojiTable["smiley"];
+    emote:string =  emojiTable["slight_smile"];
 
-    private emojiOptions:{[shortname:string]: string} = // emojiTable;
-        (({grin, smiley, frowning2, angry})=>
-        ({grin, smiley, frowning2, angry}))(emojiTable);
+    private emojiOptions:{[shortname:string]: string} =  //emojiTable;
+        (({grinning, slight_smile, frowning2, angry})=>
+        ({grinning, slight_smile, frowning2, angry}))(emojiTable);
 
     testPost():void {
-        console.log(this.emote);
-    }
-
-    test(emoji:string): void {
-        console.log(emoji);
+        console.log("TEST POST")
+        // console.log(this.emote);
     }
 }
