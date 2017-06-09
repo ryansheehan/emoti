@@ -21,8 +21,8 @@ export default class EmoteEntry extends Vue {
     emote: string = emojiTable["slight_smile"];
 
     private emojiOptions: { [shortname: string]: string } =  //emojiTable;
-        (({ grinning, slight_smile, frowning2, angry }) =>
-        ({ grinning, slight_smile, frowning2, angry }))(emojiTable);
+        (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
+        ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
 
     testPost(): void {
         console.log(`POST: ${this.emote}`);
