@@ -28,6 +28,7 @@ import emojiTable from "../emoji-table";
     }
 })
 export default class EmoteEntry extends Vue {
+    // tslint:disable-next-line:no-string-literal
     emote: string = emojiTable["slight_smile"];
 
     @NoCache
@@ -41,7 +42,9 @@ export default class EmoteEntry extends Vue {
 
     uid:string;
 
-    private emojiOptions: { [shortname: string]: string } =  //emojiTable;
+    // used in the template
+    // tslint:disable-next-line:no-unused-variable
+    private emojiOptions: { [shortname: string]: string } =  // emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
 }

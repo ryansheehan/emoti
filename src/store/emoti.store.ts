@@ -26,7 +26,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
     state: IEmotiState = {
         emotis: [],
-    }
+    };
 
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
         "post": ({commit}, emoti:IEmoti): Promise<string> => {
@@ -58,11 +58,11 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                 }
             });
         }
-    }
+    };
 
     mutations: Vuex.MutationTree<IEmotiState> = {
         "addEmoti": (state:IEmotiState, emoti:IEmoti): any => {
             state.emotis = [...state.emotis, emoti];
         }
-    }
+    };
 }
