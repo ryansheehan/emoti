@@ -1,8 +1,10 @@
 import Vue from "vue";
-import { Component, mapActions, NoCache } from "./vue-class-helpers";
+import { Component, mapActions, mapGetters, mapState, NoCache } from "./vue-class-helpers";
 import { IEmoti } from "../store/emoti.store";
+import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 import emojiTable from "../emoji-table";
+
 // import * as emojione from "emojione";
 
 // console.log(`smiley => ${emojione.shortnameToUnicode(":smiley:")}`);
@@ -17,6 +19,13 @@ import emojiTable from "../emoji-table";
     methods: {
         ...mapActions("emoti", ["post"])
     },
+
+    computed: {
+        ...mapGetters("auth", ["isAuthenticated", "isPending"]),
+        ...mapState("auth", {
+            uid: (state:IAuthState)=> state.user ? state.user.uid : ""
+        })
+    }
 })
 export default class EmoteEntry extends Vue {
     emote: string = emojiTable["slight_smile"];
@@ -25,9 +34,12 @@ export default class EmoteEntry extends Vue {
     get emoti(): IEmoti {
         return {
             emote: this.emote,
-            timestamp: Date.now()
-        }
+            timestamp: Date.now(),
+            uid: this.uid
+        };
     }
+
+    uid:string;
 
     private emojiOptions: { [shortname: string]: string } =  //emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
