@@ -1,5 +1,6 @@
 import Vue from "vue";
-import { Component, mapActions, Prop } from "./vue-class-helpers";
+import { Component, mapActions, NoCache } from "./vue-class-helpers";
+import { IEmoti } from "../store/emoti.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 import emojiTable from "../emoji-table";
 // import * as emojione from "emojione";
@@ -20,11 +21,15 @@ import emojiTable from "../emoji-table";
 export default class EmoteEntry extends Vue {
     emote: string = emojiTable["slight_smile"];
 
+    @NoCache
+    get emoti(): IEmoti {
+        return {
+            emote: this.emote,
+            timestamp: Date.now()
+        }
+    }
+
     private emojiOptions: { [shortname: string]: string } =  //emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
-
-    testPost(): void {
-        console.log(`POST: ${this.emote}`);
-    }
 }

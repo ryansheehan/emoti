@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <form novalidate @submit.stop.prevent="testPost()">
+    <form novalidate @submit.stop.prevent="post(emoti)">
       <div class="form-layout">
         <emoji-picker class="emoji-container md-scrollbar"
                       v-model="emote"
