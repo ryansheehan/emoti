@@ -6,7 +6,6 @@ import EmojiPicker from "./emoji-picker.component.vue";
 // import { Map, TileLayer } from "vue2-leaflet";
 import OlMap from "./ol-map.component.vue";
 import emojiTable from "../emoji-table";
-import { getCurrentLocation } from "../location";
 import { Location } from "../location";
 
 
@@ -60,6 +59,6 @@ export default class EmoteEntry extends Vue {
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
 
     created():void {
-        (async ():Promise<any> => this.currentLocation = await getCurrentLocation())();
+        (async ():Promise<any> => this.currentLocation = await Location.current())();
     }
 }

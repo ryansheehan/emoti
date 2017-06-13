@@ -14,6 +14,21 @@ export class Location implements ILocation {
         this.long = long;
     }
 
+    static current():Promise<Location> {
+        return new Promise((resolve, reject)=> {
+            if(navigator && "geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(position=> {
+                    const {latitude:lat, longitude:long} = position.coords;
+                    resolve(new Location({lat,long}));
+                }, error=> {
+                    reject(error);
+                });
+            } else {
+                reject("Geolocation is not available on this device.");
+            }
+        });
+    }
+
     toLatLong():Loc {
         return [this.lat, this.long];
     }
@@ -50,19 +65,4 @@ export class Location implements ILocation {
     }
 }
 
-
-export function getCurrentLocation():Promise<Location> {
-    return new Promise((resolve, reject)=> {
-        if(navigator && "geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(position=> {
-                const {latitude:lat, longitude:long} = position.coords;
-                resolve(new Location({lat,long}));
-            }, error=> {
-                reject(error);
-            });
-        } else {
-            reject("Geolocation is not available on this device.");
-        }
-    });
-}
 

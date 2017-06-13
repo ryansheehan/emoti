@@ -2,7 +2,7 @@ import Vuex from "vuex";
 import { database } from "firebase";
 import GeoFire from "geofire";
 import firebaseApp from "../firebase.config";
-import { getCurrentLocation, Location } from "../location";
+import { Location } from "../location";
 
 const db: database.Database = firebaseApp.database();
 
@@ -34,7 +34,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                 const key: string | null = this.globalRef.push().key;
                 if(key) {
                     emoti.key = key;
-                    emoti.location = await getCurrentLocation();
+                    emoti.location = await Location.current();
 
                     const entryRef:database.Reference = this.globalRef.child(key);
                     const entryData: {emote:string, timestamp:number, uid:string} =

@@ -2,11 +2,6 @@
 
 <template>
     <div class="emote-entry">
-        <!--<div class="emote-map">
-            <v-map :zoom="13" :center="[33.0657810, -96.8022750]">
-                <v-tilelayer :url="'http://{s}.tile.osm.org/{z}/{x}/{y}.png'" />
-            </v-map>
-        </div>-->
         <div class="emote-map">
             <ol-map>
             </ol-map>
@@ -35,6 +30,7 @@
 
 .emote-form {
     flex: none;
+    background-color: gray;
 }
 
 .form-layout {
