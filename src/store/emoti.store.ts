@@ -1,8 +1,8 @@
 import Vuex from "vuex";
 import { database } from "firebase";
-import GeoFire, {Location} from "geofire";
+import GeoFire from "geofire";
 import firebaseApp from "../firebase.config";
-import { getCurrentLocation } from "../location";
+import { getCurrentLocation, Location } from "../location";
 
 const db: database.Database = firebaseApp.database();
 
@@ -43,7 +43,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                     try {
                         await entryRef.set(entryData);
                         try {
-                            await this.geofire.set(key, emoti.location);
+                            await this.geofire.set(key, emoti.location.toLatLong());
                             commit("addEmoti", emoti);
                             resolve();
                         } catch (e) {
@@ -61,7 +61,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     };
 
     mutations: Vuex.MutationTree<IEmotiState> = {
-        "addEmoti": (state:IEmotiState, emoti:IEmoti): any => {
+        "addEmoti": (state:IEmotiState, emoti:IEmoti): void => {
             state.emotis = [...state.emotis, emoti];
         }
     };

@@ -2,10 +2,14 @@
 
 <template>
     <div class="emote-entry">
-        <div class="emote-map">
+        <!--<div class="emote-map">
             <v-map :zoom="13" :center="[33.0657810, -96.8022750]">
                 <v-tilelayer :url="'http://{s}.tile.osm.org/{z}/{x}/{y}.png'" />
             </v-map>
+        </div>-->
+        <div class="emote-map">
+            <ol-map>
+            </ol-map>
         </div>
         <div class="emote-form">
             <form novalidate @submit.stop.prevent="post(emoti)">
@@ -27,12 +31,10 @@
 
 .emote-map {
     flex: 1;
-    background-color: red;
 }
 
 .emote-form {
     flex: none;
-    background-color: lightgray;
 }
 
 .form-layout {

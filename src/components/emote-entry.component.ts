@@ -3,10 +3,11 @@ import { Component, mapActions, mapGetters, mapState, NoCache } from "./vue-clas
 import { IEmoti } from "../store/emoti.store";
 import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
-import { Map, TileLayer } from "vue2-leaflet";
+// import { Map, TileLayer } from "vue2-leaflet";
+import OlMap from "./ol-map.component.vue";
 import emojiTable from "../emoji-table";
 import { getCurrentLocation } from "../location";
-import { Location } from "geofire";
+import { Location } from "../location";
 
 
 // import * as emojione from "emojione";
@@ -18,8 +19,9 @@ import { Location } from "geofire";
 @Component({
     components: {
         EmojiPicker,
-        "v-map": Map,
-        "v-tilelayer": TileLayer
+        OlMap,
+        // "v-map": Map,
+        // "v-tilelayer": TileLayer
     },
 
     methods: {
@@ -48,7 +50,8 @@ export default class EmoteEntry extends Vue {
 
     uid:string;
 
-    currentLocation: Location;
+    currentLocation: Location = new Location({lat:33.2044240, long:-96.9498580});
+    currentZoom: number = 16;
 
     // used in the template
     // tslint:disable-next-line:no-unused-variable

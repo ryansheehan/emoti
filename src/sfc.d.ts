@@ -29,7 +29,7 @@ declare module "vue2-leaflet" {
 declare module "geofire" {
     import { database } from "firebase";
 
-    export type Location = number[]; // ["lat", "long"]
+    export type Location = [number, number]; // ["lat", "long"]
 
     export type GeoQueryEvent = "ready" | "key_entered" | "key_exited" | "key_moved";
 
