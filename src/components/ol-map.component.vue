@@ -5,12 +5,16 @@
         <div class="openlayers-slot"></div>
         <div class="map-control-overlay">
             <div class="attribution-container">
-                <md-button class="attribution-button md-icon-button md-raised" @click.native="showAttribution=!showAttribution">
-                    <md-icon v-if="showAttribution">navigate_before</md-icon>
-                    <md-icon v-else>info</md-icon>
+                <md-button class="attribution-button md-icon-button md-raised md-accent" @click.native="showAttribution=!showAttribution">
+                    <transition name="switch">
+                        <md-icon v-if="showAttribution" key="expand-icon">navigate_before</md-icon>
+                        <md-icon v-else key="collapse-icon">info</md-icon>
+                    </transition>
                 </md-button>
-                <transition name="attribution-show">
-                    <div class="attribution-content" v-show="showAttribution" v-html="attributionHtml"/>
+                <transition name="show" mode="out-in">
+                    <md-whiteframe class="attribution-content-container" v-show="showAttribution">
+                        <div class="attribution-content" v-html="attributionHtml"/>
+                    </md-whiteframe>
                 </transition>
             </div>
             <div class="spacer"/>
@@ -44,24 +48,48 @@
     flex-flow: row wrap;
     align-items: center;
     margin: 6px;
-    /*background-color: white;*/
 }
 
-.attribution-button {
+.attribution-content-container {
+    padding: 0px 10px;
     background-color: white;
-}
-
-.attribution-show-enter-active, .attribution-show-leave-active {
-
-}
-
-.attribution-show-enter, .attribution-show-leave-to {
-
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 250px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
 }
 
 .attribution-content {
-    /*background-color: white;*/
+    /*overflow: hidden;*/
+    /*text-overflow: clip;*/
 }
+
+.show-enter-active, .show-leave-active {
+    transition: all 0.5s
+}
+
+.show-enter, .show-leave-to {
+    max-width: 0px;
+    padding: 0px;
+}
+
+.attribution-button {
+    z-index: 2;
+    opacity: 1;
+    margin-right: -2px;
+}
+
+.switch-enter-active, .switch-leave-active {
+    transition: all 0.5s;
+}
+
+.switch-enter, .switch-leave-to {
+    opacity: 0;
+    transform: rotate(-360deg);
+}
+
 
 .spacer {
     flex: 1;
