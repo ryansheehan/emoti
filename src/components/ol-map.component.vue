@@ -11,7 +11,7 @@
                         <md-icon v-else key="collapse-icon">info</md-icon>
                     </transition>
                 </md-button>
-                <transition name="show" mode="out-in">
+                <transition name="show">
                     <md-whiteframe class="attribution-content-container" v-show="showAttribution">
                         <div class="attribution-content" v-html="attributionHtml"/>
                     </md-whiteframe>
