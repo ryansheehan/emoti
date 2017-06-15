@@ -8,22 +8,27 @@ declare module "*.json" {
     export default value;
 }
 
-declare module "vue2-leaflet" {
-    export class GeoJSON {}
-    export class IconDefault {}
-    export class LayerGroup {}
-    export class LCircle {}
-    export class Map {}
-    export class Marker {}
-    export class Polygon {}
-    export class Polyline {}
-    export class Popup {}
-    export class Rectangle {}
-    export class TileLayer {}
-    export class Tooltip {}
-    export class WMSTileLayer {}
-    export class WMSTileLayers {}
-    export class ImageOverlay {}
+declare module "twemoji" {
+    interface ITwemojiConvert {
+        toCodePoint(unicodeSurrogates:string, sep:string):string;
+        fromCodePoint(codepoint:string):string;
+    }
+
+    class Twimoji {
+        base: string;
+        ext: string;
+        size: string;
+        className:string;
+        convert: ITwemojiConvert;
+
+        parse(what:string|HTMLElement, how?:Function|Object):string;
+        replace(text:string, callback:Function):string;
+        test(text:string):boolean;
+    }
+
+    const twimoji: Twimoji;
+
+    export default twimoji;
 }
 
 declare module "geofire" {

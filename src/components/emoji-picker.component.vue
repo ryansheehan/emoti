@@ -2,12 +2,12 @@
 
 <template>
     <md-button-toggle md-single class="emoji-toggle">
-        <md-button class="md-icon-button emoji"
+        <md-button class="md-icon-button"
                     v-once
                     v-for="(emoji, shortname) in options" :key="shortname"
                     :class="{'md-toggle': emoji==value}"
                     @click.native="update(emoji)">
-            {{emoji}}
+            <md-icon :md-src="getEmojiSvgPath(emoji)"></md-icon>
         </md-button>
     </md-button-toggle>
 </template>
@@ -19,10 +19,4 @@
     justify-content: center;
 }
 
-.emoji {
-    font-size: 28px;
-    min-height: 72px;
-    min-width: 72px;
-    color: black !important;
-}
 </style>

@@ -1,79 +1,247 @@
 
-const emojiTable:{[shortname:string]: string} = {
-    "angry":                       "😠", // unicode:"\\ud83d\\ude20"
-    "anguished":                   "😧", // unicode:"\\ud83d\\ude27"
-    "astonished":                  "😲", // unicode:"\\ud83d\\ude32"
-    "blush":                       "😊", // unicode:"\\ud83d\\ude0a"
-    "clown":                       "🤡", // unicode:"\\ud83e\\udd21"
-    "cold_sweat":                  "😰", // unicode:"\\ud83d\\ude30"
-    "confounded":                  "😖", // unicode:"\\ud83d\\ude16"
-    "confused":                    "😕", // unicode:"\\ud83d\\ude15"
-    "cowboy":                      "🤠", // unicode:"\\ud83e\\udd20"
-    "cry":                         "😢", // unicode:"\\ud83d\\ude22"
-    "disappointed":                "😞", // unicode:"\\ud83d\\ude1e"
-    "disappointed_relieved":       "😥", // unicode:"\\ud83d\\ude25"
-    "dizzy_face":                  "😵", // unicode:"\\ud83d\\ude35"
-    "drooling_face":               "🤤", // unicode:"\\ud83e\\udd24"
-    "expressionless":              "😑", // unicode:"\\ud83d\\ude11"
-    "fearful":                     "😨", // unicode:"\\ud83d\\ude28"
-    "flushed":                     "😳", // unicode:"\\ud83d\\ude33"
-    "frowning2":                   "☹️", // unicode:"\\u2639\\ufe0f"
-    "frowning":                    "😦", // unicode:"\\ud83d\\ude26"
-    "grimacing":                   "😬", // unicode:"\\ud83d\\ude2c"
-    "grin":                        "😁", // unicode:"\\ud83d\\ude01"
-    "grinning":                    "😀", // unicode:"\\ud83d\\ude00"
-    "head_bandage":                "🤕", // unicode:"\\ud83e\\udd15"
-    "heart_eyes":                  "😍", // unicode:"\\ud83d\\ude0d"
-    "hugging":                     "🤗", // unicode:"\\ud83e\\udd17"
-    "hushed":                      "😯", // unicode:"\\ud83d\\ude2f"
-    "innocent":                    "😇", // unicode:"\\ud83d\\ude07"
-    "joy":                         "😂", // unicode:"\\ud83d\\ude02"
-    "kissing":                     "😗", // unicode:"\\ud83d\\ude17"
-    "kissing_closed_eyes":         "😚", // unicode:"\\ud83d\\ude1a"
-    "kissing_heart":               "😘", // unicode:"\\ud83d\\ude18"
-    "kissing_smiling_eyes":        "😙", // unicode:"\\ud83d\\ude19"
-    "laughing":                    "😆", // unicode:"\\ud83d\\ude06"
-    "lying_face":                  "🤥", // unicode:"\\ud83e\\udd25"
-    "mask":                        "😷", // unicode:"\\ud83d\\ude37"
-    "money_mouth":                 "🤑", // unicode:"\\ud83e\\udd11"
-    "nauseated_face":              "🤢", // unicode:"\\ud83e\\udd22"
-    "nerd":                        "🤓", // unicode:"\\ud83e\\udd13"
-    "neutral_face":                "😐", // unicode:"\\ud83d\\ude10"
-    "no_mouth":                    "😶", // unicode:"\\ud83d\\ude36"
-    "open_mouth":                  "😮", // unicode:"\\ud83d\\ude2e"
-    "pensive":                     "😔", // unicode:"\\ud83d\\ude14"
-    "persevere":                   "😣", // unicode:"\\ud83d\\ude23"
-    "rage":                        "😡", // unicode:"\\ud83d\\ude21"
-    "relieved":                    "😌", // unicode:"\\ud83d\\ude0c"
-    "rofl":                        "🤣", // unicode:"\\ud83e\\udd23"
-    "rolling_eyes":                "🙄", // unicode:"\\ud83d\\ude44"
-    "scream":                      "😱", // unicode:"\\ud83d\\ude31"
-    "sleeping":                    "😴", // unicode:"\\ud83d\\ude34"
-    "sleepy":                      "😪", // unicode:"\\ud83d\\ude2a"
-    "slight_frown":                "🙁", // unicode:"\\ud83d\\ude41"
-    "slight_smile":                "🙂", // unicode:"\\ud83d\\ude42"
-    "smile":                       "😄", // unicode:"\\ud83d\\ude04"
-    "smiley":                      "😃", // unicode:"\\ud83d\\ude03"
-    "smirk":                       "😏", // unicode:"\\ud83d\\ude0f"
-    "sneezing_face":               "🤧", // unicode:"\\ud83e\\udd27"
-    "sob":                         "😭", // unicode:"\\ud83d\\ude2d"
-    "stuck_out_tongue":            "😛", // unicode:"\\ud83d\\ude1b"
-    "stuck_out_tongue_closed_eyes":"😝", // unicode:"\\ud83d\\ude1d"
-    "stuck_out_tongue_winking_eye":"😜", // unicode:"\\ud83d\\ude1c"
-    "sunglasses":                  "😎", // unicode:"\\ud83d\\ude0e"
-    "sweat":                       "😓", // unicode:"\\ud83d\\ude13"
-    "sweat_smile":                 "😅", // unicode:"\\ud83d\\ude05"
-    "thermometer_face":            "🤒", // unicode:"\\ud83e\\udd12"
-    "thinking":                    "🤔", // unicode:"\\ud83e\\udd14"
-    "tired_face":                  "😫", // unicode:"\\ud83d\\ude2b"
-    "triumph":                     "😤", // unicode:"\\ud83d\\ude24"
-    "unamused":                    "😒", // unicode:"\\ud83d\\ude12"
-    "upside_down":                 "🙃", // unicode:"\\ud83d\\ude43"
-    "weary":                       "😩", // unicode:"\\ud83d\\ude29"
-    "wink":                        "😉", // unicode:"\\ud83d\\ude09"
-    "worried":                     "😟", // unicode:"\\ud83d\\ude1f"
-    "yum":                         "😋", // unicode:"\\ud83d\\ude0b"
-    "zipper_mouth":                "🤐", // unicode:"\\ud83e\\udd10"
+export type Emoji = string;
+export type CodePoint = string;
+
+export const shortNameEmoji: {[shortname:string]: Emoji} = {
+    "angry":                        "😠",
+    "anguished":                    "😧",
+    "astonished":                   "😲",
+    "blush":                        "😊",
+    "clown":                        "🤡",
+    "cold_sweat":                   "😰",
+    "confounded":                   "😖",
+    "confused":                     "😕",
+    "cowboy":                       "🤠",
+    "cry":                          "😢",
+    "disappointed":                 "😞",
+    "disappointed_relieved":        "😥",
+    "dizzy_face":                   "😵",
+    "drooling_face":                "🤤",
+    "expressionless":               "😑",
+    "fearful":                      "😨",
+    "flushed":                      "😳",
+    "frowning2":                    "☹️",
+    "frowning":                     "😦",
+    "grimacing":                    "😬",
+    "grin":                         "😁",
+    "grinning":                     "😀",
+    "head_bandage":                 "🤕",
+    "heart_eyes":                   "😍",
+    "hugging":                      "🤗",
+    "hushed":                       "😯",
+    "innocent":                     "😇",
+    "joy":                          "😂",
+    "kissing":                      "😗",
+    "kissing_closed_eyes":          "😚",
+    "kissing_heart":                "😘",
+    "kissing_smiling_eyes":         "😙",
+    "laughing":                     "😆",
+    "lying_face":                   "🤥",
+    "mask":                         "😷",
+    "money_mouth":                  "🤑",
+    "nauseated_face":               "🤢",
+    "nerd":                         "🤓",
+    "neutral_face":                 "😐",
+    "no_mouth":                     "😶",
+    "open_mouth":                   "😮",
+    "pensive":                      "😔",
+    "persevere":                    "😣",
+    "rage":                         "😡",
+    "relieved":                     "😌",
+    "rofl":                         "🤣",
+    "rolling_eyes":                 "🙄",
+    "scream":                       "😱",
+    "sleeping":                     "😴",
+    "sleepy":                       "😪",
+    "slight_frown":                 "🙁",
+    "slight_smile":                 "🙂",
+    "smile":                        "😄",
+    "smiley":                       "😃",
+    "smirk":                        "😏",
+    "sneezing_face":                "🤧",
+    "sob":                          "😭",
+    "stuck_out_tongue":             "😛",
+    "stuck_out_tongue_closed_eyes": "😝",
+    "stuck_out_tongue_winking_eye": "😜",
+    "sunglasses":                   "😎",
+    "sweat":                        "😓",
+    "sweat_smile":                  "😅",
+    "thermometer_face":             "🤒",
+    "thinking":                     "🤔",
+    "tired_face":                   "😫",
+    "triumph":                      "😤",
+    "unamused":                     "😒",
+    "upside_down":                  "🙃",
+    "weary":                        "😩",
+    "wink":                         "😉",
+    "worried":                      "😟",
+    "yum":                          "😋",
+    "zipper_mouth":                 "🤐",
 };
 
-export default emojiTable;
+export const emojiCodePoint:{[emoji:string]:CodePoint } = {
+    "😠": "1f620",
+    "😧": "1f627",
+    "😲": "1f632",
+    "😊": "1f60a",
+    "🤡": "1f921",
+    "😰": "1f630",
+    "😖": "1f616",
+    "😕": "1f615",
+    "🤠": "1f920",
+    "😢": "1f622",
+    "😞": "1f61e",
+    "😥": "1f625",
+    "😵": "1f635",
+    "🤤": "1f924",
+    "😑": "1f611",
+    "😨": "1f628",
+    "😳": "1f633",
+    "☹️": "2639",
+    "😦": "1f626",
+    "😬": "1f62c",
+    "😁": "1f601",
+    "😀": "1f600",
+    "🤕": "1f915",
+    "😍": "1f60d",
+    "🤗": "1f917",
+    "😯": "1f62f",
+    "😇": "1f607",
+    "😂": "1f602",
+    "😗": "1f617",
+    "😚": "1f61a",
+    "😘": "1f618",
+    "😙": "1f619",
+    "😆": "1f606",
+    "🤥": "1f925",
+    "😷": "1f637",
+    "🤑": "1f911",
+    "🤢": "1f922",
+    "🤓": "1f913",
+    "😐": "1f610",
+    "😶": "1f636",
+    "😮": "1f62e",
+    "😔": "1f614",
+    "😣": "1f623",
+    "😡": "1f621",
+    "😌": "1f60c",
+    "🤣": "1f923",
+    "🙄": "1f644",
+    "😱": "1f631",
+    "😴": "1f634",
+    "😪": "1f62a",
+    "🙁": "1f641",
+    "🙂": "1f642",
+    "😄": "1f604",
+    "😃": "1f603",
+    "😏": "1f60f",
+    "🤧": "1f927",
+    "😭": "1f62d",
+    "😛": "1f61b",
+    "😝": "1f61d",
+    "😜": "1f61c",
+    "😎": "1f60e",
+    "😓": "1f613",
+    "😅": "1f605",
+    "🤒": "1f912",
+    "🤔": "1f914",
+    "😫": "1f62b",
+    "😤": "1f624",
+    "😒": "1f612",
+    "🙃": "1f643",
+    "😩": "1f629",
+    "😉": "1f609",
+    "😟": "1f61f",
+    "😋": "1f60b",
+    "🤐": "1f910",
+}
+
+export const codePointEmoji:{[codePoint:string]:Emoji } = {
+    "1f620": "😠",
+    "1f627": "😧",
+    "1f632": "😲",
+    "1f60a": "😊",
+    "1f921": "🤡",
+    "1f630": "😰",
+    "1f616": "😖",
+    "1f615": "😕",
+    "1f920": "🤠",
+    "1f622": "😢",
+    "1f61e": "😞",
+    "1f625": "😥",
+    "1f635": "😵",
+    "1f924": "🤤",
+    "1f611": "😑",
+    "1f628": "😨",
+    "1f633": "😳",
+    "2639" : "☹️",
+    "1f626": "😦",
+    "1f62c": "😬",
+    "1f601": "😁",
+    "1f600": "😀",
+    "1f915": "🤕",
+    "1f60d": "😍",
+    "1f917": "🤗",
+    "1f62f": "😯",
+    "1f607": "😇",
+    "1f602": "😂",
+    "1f617": "😗",
+    "1f61a": "😚",
+    "1f618": "😘",
+    "1f619": "😙",
+    "1f606": "😆",
+    "1f925": "🤥",
+    "1f637": "😷",
+    "1f911": "🤑",
+    "1f922": "🤢",
+    "1f913": "🤓",
+    "1f610": "😐",
+    "1f636": "😶",
+    "1f62e": "😮",
+    "1f614": "😔",
+    "1f623": "😣",
+    "1f621": "😡",
+    "1f60c": "😌",
+    "1f923": "🤣",
+    "1f644": "🙄",
+    "1f631": "😱",
+    "1f634": "😴",
+    "1f62a": "😪",
+    "1f641": "🙁",
+    "1f642": "🙂",
+    "1f604": "😄",
+    "1f603": "😃",
+    "1f60f": "😏",
+    "1f927": "🤧",
+    "1f62d": "😭",
+    "1f61b": "😛",
+    "1f61d": "😝",
+    "1f61c": "😜",
+    "1f60e": "😎",
+    "1f613": "😓",
+    "1f605": "😅",
+    "1f912": "🤒",
+    "1f914": "🤔",
+    "1f62b": "😫",
+    "1f624": "😤",
+    "1f612": "😒",
+    "1f643": "🙃",
+    "1f629": "😩",
+    "1f609": "😉",
+    "1f61f": "😟",
+    "1f60b": "😋",
+    "1f910": "🤐",
+}
+
+export function getEmojiSvgPath(emoji:Emoji):string {
+    return `/static/${emojiCodePoint[emoji]}.svg`;
+}
+
+export function getCodePointSvgPath(codePoint:CodePoint):string {
+    return `/static/${codePoint}.svg`;
+}
+
+export function getShortNameSvgPath(shortName:string):string {
+    return `/static/${emojiCodePoint[shortNameEmoji[shortName]]}.svg`;
+}
+

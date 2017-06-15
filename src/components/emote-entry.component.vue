@@ -10,7 +10,7 @@
             <form novalidate @submit.stop.prevent="post(emoti)">
                 <div class="form-layout">
                     <emoji-picker class="emoji-container md-scrollbar" v-model="emote" :options="emojiOptions" v-once />
-                    <md-button type="submit" class="md-primary md-raised post-emote">Post {{emote}}</md-button>
+                    <md-button type="submit" class="md-primary md-raised post-emote">Post <img class="post-icon" :src="getEmojiSvgPath(emote)" /></md-button>
                 </div>
             </form>
         </div>
@@ -35,16 +35,23 @@
 
 .form-layout {
     display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
 }
 
 .emoji-container {
     max-height: 600px;
     overflow: auto;
+    flex: 1;
 }
 
 .post-emote {
     align-self: flex-end;
 }
+
+.post-icon {
+    max-width: 1em;
+    max-height: 1em;
+}
+
 </style>

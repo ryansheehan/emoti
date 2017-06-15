@@ -5,7 +5,7 @@ import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 // import { Map, TileLayer } from "vue2-leaflet";
 import OlMap from "./ol-map.component.vue";
-import emojiTable from "../emoji-table";
+import { Emoji, shortNameEmoji, getEmojiSvgPath } from "../emoji-table";
 import { Location } from "../location";
 
 
@@ -24,7 +24,8 @@ import { Location } from "../location";
     },
 
     methods: {
-        ...mapActions("emoti", ["post"])
+        ...mapActions("emoti", ["post"]),
+        getEmojiSvgPath
     },
 
     computed: {
@@ -36,7 +37,7 @@ import { Location } from "../location";
 })
 export default class EmoteEntry extends Vue {
     // tslint:disable-next-line:no-string-literal
-    emote: string = emojiTable["slight_smile"];
+    emote: Emoji = shortNameEmoji["slight_smile"];
 
     @NoCache
     get emoti(): IEmoti {
@@ -54,9 +55,9 @@ export default class EmoteEntry extends Vue {
 
     // used in the template
     // tslint:disable-next-line:no-unused-variable
-    private emojiOptions: { [shortname: string]: string } =  // emojiTable;
+    private emojiOptions: { [shortname: string]: Emoji } =  // emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
-        ({ grinning, slight_smile, neutral_face, frowning2, angry }))(emojiTable);
+        ({ grinning, slight_smile, neutral_face, frowning2, angry }))(shortNameEmoji);
 
     created():void {
         (async ():Promise<any> => this.currentLocation = await Location.current())();

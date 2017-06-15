@@ -1,22 +1,26 @@
 import Vue from "vue";
-import { Component, Prop, Model, Provide } from "./vue-class-helpers";
-import emojiTable from "../emoji-table";
+import { Component, Prop } from "./vue-class-helpers";
+import { shortNameEmoji, getEmojiSvgPath, Emoji } from "../emoji-table";
 
 
-@Component
+@Component({
+    methods: {
+        getEmojiSvgPath
+    }
+})
 export default class EmojiPicker extends Vue {
     @Prop()
-    value: string;
+    value: Emoji;
 
     @Prop({
         type: Object,
-        default: function() {
-            return (({ grinning, slight_smile, frowning2, angry }) => ({ grinning, slight_smile, frowning2, angry }))(emojiTable);
+        default: function():{[shortname:string]:Emoji} {
+            return (({ grinning, slight_smile, frowning2, angry }) => ({ grinning, slight_smile, frowning2, angry }))(shortNameEmoji);
         }
     })
-    options: {[shortname:string]: string}
+    options: {[shortname:string]: Emoji}
 
-    update(emoji:string) {
-        this.$emit('input', emoji);
+    update(emoji:Emoji):void {
+        this.$emit("input", emoji);
     }
 }
