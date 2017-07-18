@@ -3,7 +3,7 @@
 <template>
   <div id="app">
     <omnibar></omnibar>
-    <router-view/>
+    <router-view></router-view>
   </div>
 </template>
 

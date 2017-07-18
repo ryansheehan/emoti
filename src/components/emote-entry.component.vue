@@ -2,17 +2,17 @@
 
 <template>
     <div class="emote-entry">
-        <div class="emote-map">
-            <ol-map>
-            </ol-map>
-        </div>
         <div class="emote-form">
             <form novalidate @submit.stop.prevent="post(emoti)">
                 <div class="form-layout">
-                    <emoji-picker class="emoji-container md-scrollbar" v-model="emote" :options="emojiOptions" v-once />
-                    <md-button type="submit" class="md-primary md-raised post-emote">Post <img class="post-icon" :src="getEmojiSvgPath(emote)" /></md-button>
+                    <emoji-picker class="emoji-container md-scrollbar" v-model="emote" :options="emojiOptions" v-once ></emoji-picker>
+                    <md-button type="submit" class="md-primary md-raised post-emote">Post <img class="post-icon" :src="getEmojiSvgPath(emote)"></img></md-button>
                 </div>
             </form>
+        </div>
+        <div class="emote-map">
+            <ol-map>
+            </ol-map>
         </div>
     </div>
 </template>
