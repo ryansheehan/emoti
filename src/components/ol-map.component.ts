@@ -84,16 +84,29 @@ export default class OlMap extends Vue {
     }
 
     mounted():void {
+        let vectorSource: source.Vector = new source.Vector({
+            features: []
+        });
+
+        let vectorLayer: layer.Vector = new layer.Vector({
+            source: vectorSource
+        });
+
         this._map = new Map({
             target: <HTMLElement>this.$el.querySelector(".openlayers-slot"),
             layers: [
                 new layer.Tile({
                     source: new source.OSM()
-                })
+                }),
+
+                vectorLayer
             ],
             controls: [], // remove default controls, so we can overlay our own
             view: this._view
         });
+
+        // vectorLayer.getSource().addFeature({})
+        // vectorLayer.getSource().addFeatures([{}, {}])
 
         this._map.on("moveend", (e:ObjectEvent)=> {
             this.$emit("update:center", this.center);
