@@ -1,8 +1,8 @@
 import Vue from "vue";
 import { Component, Prop, Watch, NoCache } from "./vue-class-helpers";
 import { Location } from "../location";
-import { Map, layer, View, source, proj, ObjectEvent, Attribution } from "openlayers"
-//import "../../node_modules/openlayers/dist/ol.css";
+import { Map, layer, View, source, proj, ObjectEvent, Attribution } from "openlayers";
+// import "../../node_modules/openlayers/dist/ol.css";
 
 
 @Component
@@ -50,7 +50,7 @@ export default class OlMap extends Vue {
         let called:boolean = false;
 
         return new Promise<any>((resolve)=> {
-            function callback(complete:boolean) {
+            function callback(complete:boolean): void {
                 --parts;
                 if (called) {
                     return;
@@ -59,7 +59,7 @@ export default class OlMap extends Vue {
                     called = true;
                     resolve(complete);
                 }
-            };
+            }
 
             this._view.animate({
                 center: dest,
