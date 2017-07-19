@@ -1,15 +1,27 @@
 import Vue from "vue";
-import { Component, Prop, Watch, NoCache } from "./vue-class-helpers";
+import { Component, Prop, Watch, NoCache, mapActions } from "./vue-class-helpers";
 import { Location } from "../location";
-import { Map, layer, View, source, proj, ObjectEvent, Attribution } from "openlayers";
+import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
+import { Map, layer, View, source, proj, style, ObjectEvent, Attribution } from "openlayers";
 // import "../../node_modules/openlayers/dist/ol.css";
 
 
-@Component
+@Component({
+    methods: {
+        ...mapActions("emoti", ["updateCenter"])
+    },
+})
 export default class OlMap extends Vue {
+    updateCenter:(loc:Location)=>void; // mapAction
+
     private _map:Map;
 
     private _view:View;
+
+    emojiAssetNames:string[] = ["grinning", "slight_smile", "neutral_face", "frowning2", "angry"];
+
+    private _vectorLayer: layer.Vector;
+    private _styleMap: {[emoji:string]:style.Style};
 
     showAttribution:boolean = false;
     get attributionHtml():string {
@@ -21,7 +33,10 @@ export default class OlMap extends Vue {
         return Location.fromLongLat(proj.toLonLat(this._map.getView().getCenter()));
     }
     set center(value:Location) {
-        this._view.setCenter(proj.fromLonLat(value.toLongLat()));
+        this.updateCenter(value);
+        if(this._view) {
+            this._view.setCenter(proj.fromLonLat(value.toLongLat()));
+        }
     }
 
     @NoCache
@@ -42,6 +57,7 @@ export default class OlMap extends Vue {
 
     async recenter():Promise<any> {
         const loc:Location = await Location.current();
+        this.updateCenter(loc);
         const dest:[number, number] = proj.fromLonLat(loc.toLongLat());
 
         const duration:number = 2000;
@@ -84,13 +100,26 @@ export default class OlMap extends Vue {
     }
 
     mounted():void {
-        let vectorSource: source.Vector = new source.Vector({
-            features: []
-        });
+        this._styleMap = this.emojiAssetNames.reduce<any>((r:{[e:string]:style.Style}, sn:string)=>{
+            const e: string = shortNameEmoji[sn];
+            r[e] = new style.Style({
+                image: new style.Icon({
+                    src: `/assets/${emojiCodePoint[e]}.svg`,
+                    anchor: [0.5,0.5],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'fraction',
+                    rotateWithView: true,
+                    size: [25,25]
+                })
+            });
+            return r;
+        }, {});
 
-        let vectorLayer: layer.Vector = new layer.Vector({
-            source: vectorSource
-        });
+        this._vectorLayer = new layer.Vector({
+            source: new source.Vector({
+                features: []
+            })
+        })
 
         this._map = new Map({
             target: <HTMLElement>this.$el.querySelector(".openlayers-slot"),
@@ -99,7 +128,7 @@ export default class OlMap extends Vue {
                     source: new source.OSM()
                 }),
 
-                vectorLayer
+                this._vectorLayer
             ],
             controls: [], // remove default controls, so we can overlay our own
             view: this._view
@@ -109,6 +138,7 @@ export default class OlMap extends Vue {
         // vectorLayer.getSource().addFeatures([{}, {}])
 
         this._map.on("moveend", (e:ObjectEvent)=> {
+            this.updateCenter(this.center);
             this.$emit("update:center", this.center);
             this.$emit("update:zoom", this.zoom);
         });

@@ -16,6 +16,7 @@ export interface IEmoti {
 
 export interface IEmotiState {
     emotis: IEmoti[];
+    center: Location;
 }
 
 export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
@@ -26,9 +27,13 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
     state: IEmotiState = {
         emotis: [],
+        center: new Location({lat: 0, long: 0}),
     };
 
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
+        "updateCenter": ({commit}, c:Location): void => {
+            commit("setCenter", c);
+        },
         "post": ({commit}, emoti:IEmoti): Promise<string> => {
             return new Promise(async (resolve, reject)=> {
                 const key: string | null = this.globalRef.push().key;
@@ -63,6 +68,9 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     mutations: Vuex.MutationTree<IEmotiState> = {
         "addEmoti": (state:IEmotiState, emoti:IEmoti): void => {
             state.emotis = [...state.emotis, emoti];
+        },
+        "setCenter": (state:IEmotiState, center:Location): void => {
+            state.center = center;
         }
     };
 }

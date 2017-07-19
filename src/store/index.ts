@@ -10,7 +10,7 @@ interface IRootState {
     auth?: IAuthState;
     emoti?: IEmotiState;
 
-    map?: IMapState;
+    //map?: IMapState;
 }
 
 const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
@@ -20,7 +20,7 @@ const store:Vuex.Store<IRootState> = new Vuex.Store<IRootState>({
         // counter: new CounterModule<IRootState>(),
         auth: new AuthModule<IRootState>(),
         emoti: new EmotiModule<IRootState>(),
-        map: new MapModule<IRootState>()
+        // map: new MapModule<IRootState>()
     }
 });
 
