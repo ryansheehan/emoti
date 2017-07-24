@@ -9,18 +9,20 @@
         "Emoti",
         "Emotivent",
         "Omnibar",
-        "emotis",
-        "shortcode",
-        "shortname",
-        "emojione",
-        "geofire",
         "Sidenav",
         "Snackbar",
         "Subheader",
         "Whiteframe",
+        "appspot",
         "coord",
+        "emojione",
+        "emotis",
+        "firebaseapp",
+        "geofire",
+        "moveend",
         "openlayers",
-        "moveend"
+        "shortcode",
+        "shortname"
     ],
     // flagWords - list of words to be always considered incorrect
     // This is useful for offensive words and common spelling errors.

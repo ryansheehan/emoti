@@ -17,6 +17,7 @@ export interface IEmoti {
 export interface IEmotiState {
     emotis: IEmoti[];
     center: Location;
+    radius: number; // kilometers
 }
 
 export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootState> {
@@ -28,12 +29,18 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     state: IEmotiState = {
         emotis: [],
         center: new Location({lat: 0, long: 0}),
+        radius: 0,
     };
 
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
+        "updateRadius": ({commit}, radius:number): void => {
+            commit("setRadius", radius);
+        },
+
         "updateCenter": ({commit}, c:Location): void => {
             commit("setCenter", c);
         },
+
         "post": ({commit}, emoti:IEmoti): Promise<string> => {
             return new Promise(async (resolve, reject)=> {
                 const key: string | null = this.globalRef.push().key;
@@ -69,8 +76,13 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
         "addEmoti": (state:IEmotiState, emoti:IEmoti): void => {
             state.emotis = [...state.emotis, emoti];
         },
+
         "setCenter": (state:IEmotiState, center:Location): void => {
             state.center = center;
+        },
+
+        "setRadius": (state:IEmotiState, radius:number): void => {
+            state.radius = radius;
         }
     };
 }

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch, NoCache, mapActions } from "./vue-class-helpers";
 import { Location } from "../location";
+import { Extent } from "../extent";
 import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
 import { Map, layer, View, source, proj, style, ObjectEvent, Attribution } from "openlayers";
 // import "../../node_modules/openlayers/dist/ol.css";
@@ -8,11 +9,12 @@ import { Map, layer, View, source, proj, style, ObjectEvent, Attribution } from 
 
 @Component({
     methods: {
-        ...mapActions("emoti", ["updateCenter"])
+        ...mapActions("emoti", ["updateCenter", "updateRadius"])
     },
 })
 export default class OlMap extends Vue {
     updateCenter:(loc:Location)=>void; // mapAction
+    updateRadius:(radius:number)=>void; // mapAction
 
     private _map:Map;
 
@@ -21,7 +23,7 @@ export default class OlMap extends Vue {
     emojiAssetNames:string[] = ["grinning", "slight_smile", "neutral_face", "frowning2", "angry"];
 
     private _vectorLayer: layer.Vector;
-    private _styleMap: {[emoji:string]:style.Style};
+    private _styleMap: {[emoji:string]: style.Style};
 
     showAttribution:boolean = false;
     get attributionHtml():string {
@@ -33,7 +35,7 @@ export default class OlMap extends Vue {
         return Location.fromLongLat(proj.toLonLat(this._map.getView().getCenter()));
     }
     set center(value:Location) {
-        this.updateCenter(value);
+        // this.updateCenter(value);
         if(this._view) {
             this._view.setCenter(proj.fromLonLat(value.toLongLat()));
         }
@@ -44,7 +46,10 @@ export default class OlMap extends Vue {
         return this._map.getView().getZoom();
     }
     set zoom(value:number) {
-        this._view.setZoom(value);
+        if(this._view) {
+            this._view.setZoom(value);
+        }
+        // this.updateRadius(this.calculateRadius());
     }
 
     adjustZoom(relativeAmount: number): void {
@@ -55,9 +60,23 @@ export default class OlMap extends Vue {
         });
     }
 
+    private calculateRadius(): number {
+        const wgs84Sphere: ol.Sphere = new ol.Sphere(6378137);
+        const sourceProj: proj.Projection = this._view.getProjection();
+
+        const arrExtent: [number, number, number, number] = this._view.calculateExtent(this._map.getSize());
+        const center: [number, number] = this._view.getCenter();
+
+        const p0: [number, number] = proj.transform(center, sourceProj, "ESPG:4326");
+        const p1: [number, number] = proj.transform(<[number,number]>arrExtent.slice(0,1), sourceProj, "ESPG:4326");
+
+        const haversineDist: number = wgs84Sphere.haversineDistance(p0, p1);
+        return haversineDist / 1000.0;
+    }
+
     async recenter():Promise<any> {
         const loc:Location = await Location.current();
-        this.updateCenter(loc);
+        // this.updateCenter(loc);
         const dest:[number, number] = proj.fromLonLat(loc.toLongLat());
 
         const duration:number = 2000;
@@ -100,14 +119,14 @@ export default class OlMap extends Vue {
     }
 
     mounted():void {
-        this._styleMap = this.emojiAssetNames.reduce<any>((r:{[e:string]:style.Style}, sn:string)=>{
+        this._styleMap = this.emojiAssetNames.reduce<any>((r:{[e:string]: style.Style}, sn:string)=> {
             const e: string = shortNameEmoji[sn];
             r[e] = new style.Style({
                 image: new style.Icon({
                     src: `/assets/${emojiCodePoint[e]}.svg`,
                     anchor: [0.5,0.5],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'fraction',
+                    anchorXUnits: "fraction",
+                    anchorYUnits: "fraction",
                     rotateWithView: true,
                     size: [25,25]
                 })
@@ -119,7 +138,7 @@ export default class OlMap extends Vue {
             source: new source.Vector({
                 features: []
             })
-        })
+        });
 
         this._map = new Map({
             target: <HTMLElement>this.$el.querySelector(".openlayers-slot"),
@@ -139,6 +158,7 @@ export default class OlMap extends Vue {
 
         this._map.on("moveend", (e:ObjectEvent)=> {
             this.updateCenter(this.center);
+            // this.updateRadius(this.calculateRadius());
             this.$emit("update:center", this.center);
             this.$emit("update:zoom", this.zoom);
         });
