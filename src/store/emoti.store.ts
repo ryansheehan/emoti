@@ -38,7 +38,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
 
     private areaQuery: IGeoQuery | null = null;
-    private areaCallbackRegistration: IGeoCallbackRegistration | null = null;
+    private newEmotiRegistration: IGeoCallbackRegistration | null = null;
 
     private isRadiusInitialized: boolean = false;
     private isCenterInitialized: boolean = false;
@@ -54,9 +54,9 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
         "createWatchArea": ({ commit }, area: IArea): void => {
             // cancel any existing callbacks
-            if (this.areaCallbackRegistration) {
-                this.areaCallbackRegistration.cancel();
-                this.areaCallbackRegistration = null;
+            if (this.newEmotiRegistration) {
+                this.newEmotiRegistration.cancel();
+                this.newEmotiRegistration = null;
             }
 
             // cancel any active query
@@ -64,6 +64,8 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                 this.areaQuery.cancel();
                 this.areaQuery = null;
             }
+
+            // clear all data
             commit("clearEmoti");
 
             // setup the query
@@ -73,7 +75,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
             });
 
             // set a callback for anything that exists or is newly added to the current search
-            this.areaCallbackRegistration = this.areaQuery.on("key_entered",
+            this.newEmotiRegistration = this.areaQuery.on("key_entered",
                 async (key: string, location: [number, number], distance: number): Promise<any> => {
                     let emote: string = "";
                     let timestamp: number = -1;
@@ -95,6 +97,9 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                     }
                 }
             );
+
+            // this.areaQuery.on("key_exited", (key: string, location: [number, number], distance: number): void => {
+            // });
         },
 
         "updateRadius": ({ commit, dispatch, state }, radius: number): void => {
