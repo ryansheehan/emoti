@@ -154,7 +154,6 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                         await entryRef.set(entryData);
                         try {
                             await this.geofire.set(key, emoti.location.toLatLong());
-                            commit("addEmoti", emoti);
                             resolve();
                         } catch (e) {
                             entryRef.remove();
