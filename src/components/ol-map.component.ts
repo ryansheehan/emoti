@@ -1,5 +1,6 @@
 import Vue from "vue";
-import { Component, Prop, Watch, NoCache, mapActions } from "./vue-class-helpers";
+import { Component, Prop, Watch, NoCache, mapActions, mapState } from "./vue-class-helpers";
+import { IEmoti } from "../store/emoti.store";
 import { Location } from "../location";
 import { Extent } from "../extent";
 import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
@@ -11,10 +12,20 @@ import { Map, layer, View, source, proj, style, ObjectEvent, Attribution, Sphere
     methods: {
         ...mapActions("emoti", ["updateCenter", "updateRadius"])
     },
+    computed: {
+        ...mapState("emoti", ["emotis"])
+    }
 })
 export default class OlMap extends Vue {
     updateCenter:(loc:Location)=>void; // mapAction
     updateRadius:(radius:number)=>void; // mapAction
+
+    @Watch("emotis")  // emotis from mapState
+    onEmotisChanged(emotis:IEmoti[]): void {
+        // update pins
+
+        return;
+    }
 
     private _map:Map;
 

@@ -13,7 +13,7 @@ import { Component, mapActions, mapGetters, mapState, Watch } from "./vue-class-
 })
 export default class Login extends Vue {
     @Watch("isAuthenticated")
-    onIsAuthenticatedChanged(val: boolean, oldValue: boolean) {
+    onIsAuthenticatedChanged(val: boolean, oldValue: boolean): void {
         this.$router.replace("/");
     }
 }
