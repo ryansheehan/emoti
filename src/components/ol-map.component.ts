@@ -3,7 +3,7 @@ import { Component, Prop, Watch, NoCache, mapActions } from "./vue-class-helpers
 import { Location } from "../location";
 import { Extent } from "../extent";
 import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
-import { Map, layer, View, source, proj, style, ObjectEvent, Attribution } from "openlayers";
+import { Map, layer, View, source, proj, style, ObjectEvent, Attribution, Sphere } from "openlayers";
 // import "../../node_modules/openlayers/dist/ol.css";
 
 
@@ -49,7 +49,7 @@ export default class OlMap extends Vue {
         if(this._view) {
             this._view.setZoom(value);
         }
-        // this.updateRadius(this.calculateRadius());
+        this.updateRadius(this.calculateRadius());
     }
 
     adjustZoom(relativeAmount: number): void {
@@ -61,17 +61,15 @@ export default class OlMap extends Vue {
     }
 
     private calculateRadius(): number {
-        const wgs84Sphere: ol.Sphere = new ol.Sphere(6378137);
+        const wgs84Sphere: Sphere = new Sphere(6378137);
         const sourceProj: proj.Projection = this._view.getProjection();
 
-        const arrExtent: [number, number, number, number] = this._view.calculateExtent(this._map.getSize());
-        const center: [number, number] = this._view.getCenter();
+        const arrExtent: [number, number] = proj.toLonLat(<[number,number]>(this._view.calculateExtent(this._map.getSize()).slice(0,2)));
+        const center: [number,number] = proj.toLonLat(this._map.getView().getCenter());
 
-        const p0: [number, number] = proj.transform(center, sourceProj, "ESPG:4326");
-        const p1: [number, number] = proj.transform(<[number,number]>arrExtent.slice(0,1), sourceProj, "ESPG:4326");
+        const haversineDist: number = wgs84Sphere.haversineDistance(center, arrExtent) / 1000.0;
 
-        const haversineDist: number = wgs84Sphere.haversineDistance(p0, p1);
-        return haversineDist / 1000.0;
+        return haversineDist;
     }
 
     async recenter():Promise<any> {
@@ -158,7 +156,7 @@ export default class OlMap extends Vue {
 
         this._map.on("moveend", (e:ObjectEvent)=> {
             this.updateCenter(this.center);
-            // this.updateRadius(this.calculateRadius());
+            this.updateRadius(this.calculateRadius());
             this.$emit("update:center", this.center);
             this.$emit("update:zoom", this.zoom);
         });

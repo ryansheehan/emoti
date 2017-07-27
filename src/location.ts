@@ -29,6 +29,10 @@ export class Location implements ILocation {
         });
     }
 
+    clone(): Location {
+        return new Location({lat: this.lat, long: this.long});
+    }
+
     toLatLong():Loc {
         return [this.lat, this.long];
     }
