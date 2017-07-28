@@ -40,12 +40,24 @@ export default class EmoteEntry extends Vue {
     emote: Emoji = shortNameEmoji["slight_smile"];
 
     @NoCache
-    get emoti(): IEmoti {
-        return {
-            emote: this.emote,
-            timestamp: Date.now(),
-            uid: this.uid
-        };
+    get emoti(): Promise<IEmoti> {
+
+        return new Promise<IEmoti>(async (resolve) => {
+
+            let location: Location = new Location({lat:0, long: 0});
+            try {
+                location = await Location.current();
+            } catch (e) {
+                // just let the default pass through
+            }
+
+            resolve({
+                emote: this.emote,
+                timestamp: Date.now(),
+                location,
+                uid: this.uid,
+            })
+        });
     }
 
     uid:string;

@@ -14,7 +14,7 @@ interface IFirebaseEmoti {
 
 export interface IEmoti {
     key?: string | undefined | null;
-    location?: Location;
+    location: Location;
     emote: string;
     timestamp: number;
     uid: string;
@@ -144,12 +144,18 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
             }
         },
 
-        "post": ({ commit }, emoti: IEmoti): Promise<string> => {
+        "post": ({ commit }, emotiLike: IEmoti | Promise<IEmoti>): Promise<string> => {
             return new Promise(async (resolve, reject) => {
+                let emoti:IEmoti | null = null;
+                try {
+                    emoti = await Promise.resolve(emotiLike);
+                } catch(e) {
+                    return reject("Unable to resolve emoti");
+                }
+
                 const key: string | null = this.globalRef.push().key;
                 if (key) {
                     emoti.key = key;
-                    emoti.location = await Location.current();
 
                     const entryRef: database.Reference = this.globalRef.child(key);
                     const entryData: { emote: string, timestamp: number, uid: string } =
