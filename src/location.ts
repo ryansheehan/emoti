@@ -2,24 +2,24 @@ import {Location as Loc} from "geofire";
 
 interface ILocation {
     lat:number;
-    long:number;
+    lng:number;
 }
 
-export class Location implements ILocation {
+export default class Location implements ILocation {
     public lat:number;
-    public long:number;
+    public lng:number;
 
-    constructor({lat, long}: ILocation) {
+    constructor({lat, lng}: ILocation) {
         this.lat = lat;
-        this.long = long;
+        this.lng = lng;
     }
 
     static current():Promise<Location> {
         return new Promise((resolve, reject)=> {
             if(navigator && "geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(position=> {
-                    const {latitude:lat, longitude:long} = position.coords;
-                    resolve(new Location({lat,long}));
+                    const {latitude:lat, longitude:lng} = position.coords;
+                    resolve(new Location({lat,lng}));
                 }, error=> {
                     reject(error);
                 });
@@ -30,42 +30,42 @@ export class Location implements ILocation {
     }
 
     clone(): Location {
-        return new Location({lat: this.lat, long: this.long});
+        return new Location({lat: this.lat, lng: this.lng});
     }
 
     toLatLong():Loc {
-        return [this.lat, this.long];
+        return [this.lat, this.lng];
     }
 
     toLongLat():Loc {
-        return [this.long, this.lat];
+        return [this.lng, this.lat];
     }
 
     static fromLatLong(coord:Loc):Location {
-        return new Location({lat:coord[0], long:coord[1]});
+        return new Location({lat:coord[0], lng:coord[1]});
     }
 
     assignLatLong(coord:Loc):void {
         this.lat = coord[0];
-        this.long = coord[1];
+        this.lng = coord[1];
     }
 
     static fromLongLat(coord:Loc):Location {
-        return new Location({lat:coord[1], long:coord[0]});
+        return new Location({lat:coord[1], lng:coord[0]});
     }
 
     assignLongLat(coord:Loc):void {
         this.lat = coord[1];
-        this.long = coord[0];
+        this.lng = coord[0];
     }
 
     assign(loc:ILocation):void {
         this.lat = loc.lat;
-        this.long = loc.long;
+        this.lng = loc.lng;
     }
 
     equals(loc:ILocation):boolean {
-        return this.lat === loc.lat && this.long === loc.long;
+        return this.lat === loc.lat && this.lng === loc.lng;
     }
 }
 

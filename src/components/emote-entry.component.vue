@@ -11,8 +11,10 @@
             </form>
         </div>
         <div class="emote-map">
-            <ol-map>
-            </ol-map>
+            <!-- <ol-map>
+            </ol-map> -->
+             <l-map></l-map>
+        </v-map>
         </div>
     </div>
 </template>

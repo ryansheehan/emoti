@@ -1,8 +1,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch, NoCache, mapActions, mapState } from "./vue-class-helpers";
 import { IEmoti } from "../store/emoti.store";
-import { Location } from "../location";
-import { Extent } from "../extent";
+import Location from "../location";
 import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
 import { Map, layer, View, source, proj, style, ObjectEvent, Attribution, Sphere } from "openlayers";
 // import "../../node_modules/openlayers/dist/ol.css";

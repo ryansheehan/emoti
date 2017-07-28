@@ -14,11 +14,11 @@ export default class EmojiPicker extends Vue {
 
     @Prop({
         type: Object,
-        default: function():{[shortname:string]:Emoji} {
+        default: function():{[shortname:string]: Emoji} {
             return (({ grinning, slight_smile, frowning2, angry }) => ({ grinning, slight_smile, frowning2, angry }))(shortNameEmoji);
         }
     })
-    options: {[shortname:string]: Emoji}
+    options: { [shortname:string]: Emoji };
 
     update(emoji:Emoji):void {
         this.$emit("input", emoji);

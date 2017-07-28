@@ -2,7 +2,7 @@ import Vuex from "vuex";
 import { database } from "firebase";
 import GeoFire, { IGeoQuery, IGeoCallbackRegistration, IGeoQueryCriteria } from "geofire";
 import firebaseApp from "../firebase.config";
-import { Location } from "../location";
+import Location from "../location";
 
 const db: database.Database = firebaseApp.database();
 
@@ -46,7 +46,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     state: IEmotiState = {
         emotis: [],
         watchArea: {
-            center: new Location({ lat: 0, long: 0 }),
+            center: new Location({ lat: 0, lng: 0 }),
             radius: 0,
         }
     };
@@ -124,7 +124,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
         },
 
         "updateCenter": ({ commit, dispatch, state }, c: Location): void => {
-            if (c.lat !== state.watchArea.center.lat || c.long !== state.watchArea.center.long) {
+            if (c.lat !== state.watchArea.center.lat || c.lng !== state.watchArea.center.lng) {
                 commit("setCenter", c.clone());
                 this.isCenterInitialized = true;
                 if(this.areaQuery) {

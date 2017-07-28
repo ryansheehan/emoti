@@ -13,7 +13,7 @@ sync(store, router);
 
 Vue.use(VueMaterial);
 
-new Vue({
+const main:Vue = new Vue({
   el: "#app",
   store,
   router,
