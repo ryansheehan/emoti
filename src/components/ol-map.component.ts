@@ -21,9 +21,21 @@ export default class OlMap extends Vue {
 
     @Watch("emotis")  // emotis from mapState
     onEmotisChanged(emotis:IEmoti[]): void {
-        // update pins
 
-        return;
+        const features = emotis.map((emoti:IEmoti)=>{
+            const feature = new Feature({
+                // geometry: new geom.Point(emoti.location.toLongLat()),
+                geometry: new geom.Point([0,0]),
+                name: emojiShortName[emoti.emote].replace("_", " ")
+            });
+
+            feature.setStyle(this._styleMap[emoti.emote])
+
+            return feature;
+        });
+
+        //console.log("adding features: ", features);
+        //this._vectorLayer.getSource().addFeatures(features);
     }
 
     private _map:Map;
@@ -131,7 +143,7 @@ export default class OlMap extends Vue {
             const e: string = shortNameEmoji[sn];
             r[e] = new style.Style({
                 image: new style.Icon({
-                    src: `/assets/${emojiCodePoint[e]}.svg`,
+                    src: `/static/${emojiCodePoint[e]}.svg`,
                     anchor: [0.5,0.5],
                     anchorXUnits: "fraction",
                     anchorYUnits: "fraction",
@@ -142,9 +154,18 @@ export default class OlMap extends Vue {
             return r;
         }, {});
 
+        // [-96.9498580, 33.2044240] // "EPSG:4326"
+        const testFeature = new Feature(new geom.Circle(proj.fromLonLat([-96.9498580, 33.2044240])));
+
+        const testStyle = this._styleMap[shortNameEmoji["grinning"]];
+
+        console.log("testStyle: ", testStyle);
+
+        testFeature.setStyle(testStyle);
+
         this._vectorLayer = new layer.Vector({
             source: new source.Vector({
-                features: []
+                features: [testFeature]
             })
         });
 
