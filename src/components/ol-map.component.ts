@@ -2,8 +2,8 @@ import Vue from "vue";
 import { Component, Prop, Watch, NoCache, mapActions, mapState } from "./vue-class-helpers";
 import { IEmoti } from "../store/emoti.store";
 import Location from "../location";
-import {emojiCodePoint, shortNameEmoji} from "../emoji-table";
-import { Map, layer, View, source, proj, style, ObjectEvent, Attribution, Sphere } from "openlayers";
+import {emojiCodePoint, shortNameEmoji, emojiShortName} from "../emoji-table";
+import { Map, layer, View, source, proj, style, ObjectEvent, Attribution, Sphere, Feature, geom } from "openlayers";
 // import "../../node_modules/openlayers/dist/ol.css";
 
 
@@ -22,20 +22,20 @@ export default class OlMap extends Vue {
     @Watch("emotis")  // emotis from mapState
     onEmotisChanged(emotis:IEmoti[]): void {
 
-        const features = emotis.map((emoti:IEmoti)=>{
-            const feature = new Feature({
+        const features: Feature[] = emotis.map((emoti:IEmoti): Feature=> {
+            const feature: Feature = new Feature({
                 // geometry: new geom.Point(emoti.location.toLongLat()),
                 geometry: new geom.Point([0,0]),
                 name: emojiShortName[emoti.emote].replace("_", " ")
             });
 
-            feature.setStyle(this._styleMap[emoti.emote])
+            feature.setStyle(this._styleMap[emoti.emote]);
 
             return feature;
         });
 
-        //console.log("adding features: ", features);
-        //this._vectorLayer.getSource().addFeatures(features);
+        // console.log("adding features: ", features);
+        // this._vectorLayer.getSource().addFeatures(features);
     }
 
     private _map:Map;
@@ -155,9 +155,9 @@ export default class OlMap extends Vue {
         }, {});
 
         // [-96.9498580, 33.2044240] // "EPSG:4326"
-        const testFeature = new Feature(new geom.Circle(proj.fromLonLat([-96.9498580, 33.2044240])));
+        const testFeature: Feature = new Feature(new geom.Circle(proj.fromLonLat([-96.9498580, 33.2044240])));
 
-        const testStyle = this._styleMap[shortNameEmoji["grinning"]];
+        const testStyle: style.Style = this._styleMap[shortNameEmoji["grinning"]];
 
         console.log("testStyle: ", testStyle);
 

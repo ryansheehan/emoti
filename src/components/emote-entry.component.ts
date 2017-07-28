@@ -47,7 +47,7 @@ export default class EmoteEntry extends Vue {
 
         return new Promise<IEmoti>(async (resolve) => {
 
-            let location: Location = new Location({lat:0, long: 0});
+            let location: Location = new Location({lat:0, lng: 0});
             try {
                 location = await Location.current();
             } catch (e) {
@@ -59,7 +59,7 @@ export default class EmoteEntry extends Vue {
                 timestamp: Date.now(),
                 location,
                 uid: this.uid,
-            })
+            });
         });
     }
 
