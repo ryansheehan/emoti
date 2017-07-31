@@ -51,6 +51,16 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
         }
     };
 
+    getters: Vuex.GetterTree<IEmotiState, RootState> = {
+        center(state:IEmotiState): Location {
+            return state.watchArea.center;
+        },
+
+        radius(state:IEmotiState): number {
+            return state.watchArea.radius;
+        }
+    };
+
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
         "createWatchArea": ({ commit }, area: IArea): void => {
             // cancel any existing callbacks
@@ -70,7 +80,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
             // setup the query
             this.areaQuery = this.geofire.query({
-                center: area.center.toLatLong(),
+                center: area.center.toLatLng(),
                 radius: area.radius
             });
 
@@ -90,7 +100,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                             emote,
                             timestamp,
                             uid,
-                            location: Location.fromLatLong(location)
+                            location: Location.fromLatLng(location)
                         });
                     } catch (e) {
                         console.warn(`Failed to get data at ${key}`);
@@ -125,11 +135,11 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
         "updateCenter": ({ commit, dispatch, state }, c: Location): void => {
             if (c.lat !== state.watchArea.center.lat || c.lng !== state.watchArea.center.lng) {
-                commit("setCenter", c.clone());
+                commit("setCenter", c);
                 this.isCenterInitialized = true;
                 if(this.areaQuery) {
                     const criteria: IGeoQueryCriteria = {
-                        center: state.watchArea.center.toLatLong(),
+                        center: state.watchArea.center.toLatLng(),
                         radius: this.areaQuery.radius()
                     };
                     this.areaQuery.updateCriteria(criteria);
@@ -164,7 +174,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                     try {
                         await entryRef.set(entryData);
                         try {
-                            await this.geofire.set(key, emoti.location.toLatLong());
+                            await this.geofire.set(key, emoti.location.toLatLng());
                             resolve();
                         } catch (e) {
                             entryRef.remove();
@@ -186,7 +196,7 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
         },
 
         "setCenter": (state: IEmotiState, center: Location): void => {
-            state.watchArea = { center, radius: state.watchArea.radius };
+            state.watchArea = { center: center.clone(), radius: state.watchArea.radius };
         },
 
         "setRadius": (state: IEmotiState, radius: number): void => {

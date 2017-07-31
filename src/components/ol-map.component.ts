@@ -24,7 +24,7 @@ export default class OlMap extends Vue {
 
         const features: Feature[] = emotis.map((emoti:IEmoti): Feature=> {
             const feature: Feature = new Feature({
-                // geometry: new geom.Point(emoti.location.toLongLat()),
+                // geometry: new geom.Point(emoti.location.toLngLat()),
                 geometry: new geom.Point([0,0]),
                 name: emojiShortName[emoti.emote].replace("_", " ")
             });
@@ -54,12 +54,12 @@ export default class OlMap extends Vue {
 
     @NoCache
     get center():Location {
-        return Location.fromLongLat(proj.toLonLat(this._map.getView().getCenter()));
+        return Location.fromLngLat(proj.toLonLat(this._map.getView().getCenter()));
     }
     set center(value:Location) {
         // this.updateCenter(value);
         if(this._view) {
-            this._view.setCenter(proj.fromLonLat(value.toLongLat()));
+            this._view.setCenter(proj.fromLonLat(value.toLngLat()));
         }
     }
 
@@ -97,7 +97,7 @@ export default class OlMap extends Vue {
     async recenter():Promise<any> {
         const loc:Location = await Location.current();
         // this.updateCenter(loc);
-        const dest:[number, number] = proj.fromLonLat(loc.toLongLat());
+        const dest:[number, number] = proj.fromLonLat(loc.toLngLat());
 
         const duration:number = 2000;
         const zoom:number = this._view.getZoom();

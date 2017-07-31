@@ -7,7 +7,7 @@
                 :zoom="zoom"
                 :center="center"
                 :options="leafletOptions"
-                v-on:l-moveend="moved">
+                v-on:l-moveend="onMoveEnd">
                 <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
             </v-map>
         </div>
