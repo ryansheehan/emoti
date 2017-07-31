@@ -43,7 +43,7 @@ export default class LMap extends Vue {
 
     async recenter(): Promise<any> {
         if(this.flyTo) {
-            const l = await Location.current();
+            const l: Location = await Location.current();
             if(l.lat !== 0 && l.lng !== 0) {
                 this.flyTo(l, 13);
             }
@@ -52,21 +52,23 @@ export default class LMap extends Vue {
 
     onMoveEnd(e: L.Event): void {
         if(e.target.flyTo) {
-            this.flyTo = e.target.flyTo;
+            this.flyTo = e.target.flyTo.bind(e.target);
         }
 
-        const c: Location = e.target.getCenter();
+        const c:Location = e.target.getCenter();
         const bounds: {_northEast: Location, _southWest: Location} = e.target.getBounds();
-        const r = Math.floor(e.target.distance(c, bounds._northEast) / 1000.0);
+        const r:number = Math.floor(e.target.distance(c, bounds._northEast) / 1000.0);
 
         this.updateCenter(new Location(c));
         this.updateRadius(r);
+
+        console.log("onMoveEnd");
     }
 
     created(): void {
         Location.current().then(l => {
             this.updateCenter(l);
-            this.center = l
+            this.center = l;
         });
     }
 }
