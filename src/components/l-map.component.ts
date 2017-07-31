@@ -61,8 +61,6 @@ export default class LMap extends Vue {
 
         this.updateCenter(new Location(c));
         this.updateRadius(r);
-
-        console.log("onMoveEnd");
     }
 
     created(): void {
