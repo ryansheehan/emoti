@@ -9,6 +9,13 @@
                 :options="leafletOptions"
                 v-on:l-moveend="onMoveEnd">
                 <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+                <!-- <v-marker-cluster> -->
+                    <v-marker   v-for="emoti in emotis"
+                                :key="emoti.key"
+                                :lat-lng="emoti.location.toLatLng()"
+                                :icon="getIcon(emoti.emote)">
+                    </v-marker>
+                <!-- </v-marker-cluster> -->
             </v-map>
         </div>
         <div class="map-control-overlay">

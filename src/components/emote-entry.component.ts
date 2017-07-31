@@ -70,7 +70,7 @@ export default class EmoteEntry extends Vue {
 
     // used in the template
     // tslint:disable-next-line:no-unused-variable
-    private emojiOptions: { [shortname: string]: Emoji } =  // emojiTable;
+    emojiOptions: { [shortname: string]: Emoji } =  // emojiTable;
         (({ grinning, slight_smile, neutral_face, frowning2, angry }) =>
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(shortNameEmoji);
 

@@ -13,7 +13,7 @@
         <div class="emote-map">
             <!-- <ol-map>
             </ol-map> -->
-             <l-map></l-map>
+             <l-map :emojiOptions="emojiOptions"></l-map>
         </v-map>
         </div>
     </div>

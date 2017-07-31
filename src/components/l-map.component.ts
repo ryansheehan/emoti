@@ -1,8 +1,11 @@
 import Vue from "vue";
-import { Component, Prop, NoCache, mapGetters, mapActions } from "./vue-class-helpers";
-import { Map, TileLayer } from "vue2-leaflet";
+import { Component, Prop, NoCache, mapGetters, mapActions, mapState } from "./vue-class-helpers";
+import { Map, TileLayer, Marker } from "vue2-leaflet";
+import Vue2LeafletMarkercluster from "vue2-leaflet-markercluster";
 import L from "leaflet";
 import Location from "../location";
+import { IEmoti } from "../store/emoti.store";
+import { Emoji, emojiCodePoint } from "../emoji-table";
 
 import "leaflet/dist/leaflet.css";
 
@@ -11,16 +14,28 @@ type flyToFn = (location: Location, zoom?: number, opts?: any)=> any;
 @Component({
     components: {
         "v-map": Map,
-        "v-tilelayer": TileLayer
+        "v-tilelayer": TileLayer,
+        "v-marker": Marker,
+        "v-marker-cluster": Vue2LeafletMarkercluster
     },
 
     methods: {
         ...mapActions("emoti", ["updateCenter", "updateRadius"])
     },
+
+    computed: {
+        ...mapState("emoti", ["emotis"])
+    }
 })
 export default class LMap extends Vue {
     updateCenter:(c:Location)=> void; // mapAction
     updateRadius:(r:number)=> void; // mapAction
+    emotis: IEmoti[]; // mapState
+
+    @Prop()
+    emojiOptions: { [shortname: string]: string };
+
+    emojiIcons: { [emoji:string]: L.Icon } = {};
 
     leafletOptions: any = {
         attributionControl: false,
@@ -63,7 +78,24 @@ export default class LMap extends Vue {
         this.updateRadius(r);
     }
 
+    getIcon(emoji:string): L.Icon {
+        return this.emojiIcons[emoji];
+    }
     created(): void {
+        Object.keys(this.emojiOptions).reduce<any>((r:{[emoji:string]: L.Icon}, sn:string)=> {
+            const emoji:string = this.emojiOptions[sn];
+
+            if(!(emoji in r)) {
+                r[emoji] = L.icon({
+                    iconUrl: `static/${emojiCodePoint[emoji]}.svg`,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+            }
+
+            return r;
+        }, this.emojiIcons);
+
         Location.current().then(l => {
             this.updateCenter(l);
             this.center = l;

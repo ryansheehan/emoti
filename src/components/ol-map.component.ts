@@ -157,6 +157,7 @@ export default class OlMap extends Vue {
         // [-96.9498580, 33.2044240] // "EPSG:4326"
         const testFeature: Feature = new Feature(new geom.Circle(proj.fromLonLat([-96.9498580, 33.2044240])));
 
+        // tslint:disable-next-line:no-string-literal
         const testStyle: style.Style = this._styleMap[shortNameEmoji["grinning"]];
 
         console.log("testStyle: ", testStyle);
