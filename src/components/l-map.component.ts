@@ -60,7 +60,7 @@ export default class LMap extends Vue {
         if(this.flyTo) {
             const l: Location = await Location.current();
             if(l.lat !== 0 && l.lng !== 0) {
-                this.flyTo(l, 13);
+                this.flyTo(l);
             }
         }
     }

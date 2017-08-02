@@ -67,6 +67,14 @@ export default class Location implements ILocation {
     equals(loc:ILocation):boolean {
         return this.lat === loc.lat && this.lng === loc.lng;
     }
+
+    toString(): string {
+        return `${this.lat},${this.lng}`;
+    }
+
+    static parse(latLngStr:string): Location {
+        return Location.fromLatLng(<[number,number]>latLngStr.split(",").map(v=>parseFloat(v)));
+    }
 }
 
 

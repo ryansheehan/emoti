@@ -12,12 +12,16 @@ interface IFirebaseEmoti {
     uid: string;
 }
 
-export interface IEmoti {
-    key?: string | undefined | null;
+
+export interface IEmotiData {
     location: Location;
     emote: string;
     timestamp: number;
     uid: string;
+}
+
+export interface IEmoti extends IEmotiData {
+    key: string;
 }
 
 export interface IArea {
@@ -26,6 +30,8 @@ export interface IArea {
 }
 
 export interface IEmotiState {
+    emotiLocMap : {[loc: string]: {[emoji:string]: IEmoti[]}};
+    emotiKeyMap: {[key:string]: string}; // map key => loc
     emotis: IEmoti[];
     watchArea: IArea;
 }
@@ -44,6 +50,8 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     private isCenterInitialized: boolean = false;
 
     state: IEmotiState = {
+        emotiLocMap: {},
+        emotiKeyMap: {},
         emotis: [],
         watchArea: {
             center: new Location({ lat: 0, lng: 0 }),
@@ -193,6 +201,42 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
     mutations: Vuex.MutationTree<IEmotiState> = {
         "addEmoti": (state: IEmotiState, emoti: IEmoti): void => {
             state.emotis = [...state.emotis, emoti];
+
+            const locStr:string = emoti.location.toString();
+            state.emotiKeyMap[emoti.key] = locStr;
+            let locEntry: {[emoji:string]: IEmoti[]} = state.emotiLocMap[locStr];
+            if(!locEntry) {
+                locEntry = {};
+                state.emotiLocMap[locStr] = locEntry;
+            }
+
+            let emoteBlock: IEmoti[] = locEntry[emoti.emote];
+            if(!emoteBlock) {
+                emoteBlock = [];
+                locEntry[emoti.emote] = emoteBlock;
+            }
+
+            emoteBlock.push(emoti);
+        },
+
+        "removeEmoti": (state:IEmotiState, emoti: IEmoti): void => {
+            const locStr: string = state.emotiKeyMap[emoti.key];
+            if(locStr) {
+                const locEntry: {[emoji:string]: IEmoti[]} = state.emotiLocMap[locStr];
+                if(locEntry) {
+                    const emoteBlock: IEmoti[] = locEntry[emoti.emote];
+                    if(emoteBlock) {
+                        const i:number = (<any>emoteBlock).findIndex((e:IEmoti)=>e.key === emoti.key);
+                        if(i > -1) {
+                            emoteBlock.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        },
+
+        "removeLocation": (state:IEmotiState, location:Location): void => {
+            const locStr: string = location.toString();
         },
 
         "setCenter": (state: IEmotiState, center: Location): void => {

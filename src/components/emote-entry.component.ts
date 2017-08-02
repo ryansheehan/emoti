@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Component, mapActions, mapGetters, mapState, NoCache } from "./vue-class-helpers";
-import { IEmoti } from "../store/emoti.store";
+import { IEmotiData } from "../store/emoti.store";
 import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 // import { Map, TileLayer } from "vue2-leaflet";
@@ -43,9 +43,9 @@ export default class EmoteEntry extends Vue {
     emote: Emoji = shortNameEmoji["slight_smile"];
 
     @NoCache
-    get emoti(): Promise<IEmoti> {
+    get emoti(): Promise<IEmotiData> {
 
-        return new Promise<IEmoti>(async (resolve) => {
+        return new Promise<IEmotiData>(async (resolve) => {
 
             let location: Location = new Location({lat:0, lng: 0});
             try {
