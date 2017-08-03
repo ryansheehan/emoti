@@ -1,9 +1,13 @@
-import { auth as fbaseAuth } from "firebase";
-import 'firebase/auth';
+import { auth as fbaseAuth, User } from "firebase";
+import "firebase/auth";
 import firebaseApp from "../firebase.config";
 import Vuex from "vuex";
 
-const auth:fbaseAuth.Auth = firebaseApp.auth();
+// const auth:fbaseAuth.Auth = firebaseApp.auth();
+// auth.onAuthStateChanged(function(user:any):void {
+//     console.log("onAuthStateChanged: ", user);
+//     console.log("authStateChagned - currentUser", auth.currentUser);
+// });
 
 export interface IUser {
     displayName: string | null;
@@ -21,9 +25,10 @@ export interface IAuthState {
 
 export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState> {
     namespaced:boolean = true;
+    auth:fbaseAuth.Auth;
 
     private firebaseLogin(provider: fbaseAuth.AuthProvider): Promise<any> {
-        return auth.signInWithRedirect(provider);
+        return this.auth.signInWithRedirect(provider);
     }
 
     private LoginGoogle(): Promise<any> {
@@ -35,7 +40,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
         authStatus: "undefined",
         user: null,
         initialized: false
-    }
+    };
 
     getters:Vuex.GetterTree<IAuthState, RootState> = {
         isAuthenticated(state:IAuthState):boolean {
@@ -54,18 +59,23 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
     actions: Vuex.ActionTree<IAuthState, RootState> = {
         initAuthStatus: async ({commit}):Promise<any> => {
             commit("setAuthStatus", "pending");
-            try {
-                const authResult:fbaseAuth.UserCredential = await auth.getRedirectResult();
-                if(authResult && authResult.user) {
-                    const {displayName, email, photoURL, providerId, uid} = authResult.user;
+
+            this.auth = firebaseApp.auth();
+            this.auth.onAuthStateChanged((u:User | null)=> {
+                if(u) {
+                    const {displayName, email, photoURL, providerId, uid} = u;
                     commit("setUser", {displayName, email, photoURL, providerId, uid});
                     commit("setAuthStatus", "authenticated");
                 } else {
                     commit("setAuthStatus", "unauthenticated");
                 }
+            });
+
+            try {
+                await this.auth.getRedirectResult();
                 commit("setInitialized");
-            } catch(error) {
-                console.error("Auth init error", error);
+            } catch(e) {
+                console.error(e);
                 commit("setAuthStatus", "unauthenticated");
             }
         },
@@ -87,7 +97,7 @@ export class AuthModule<RootState> implements Vuex.Module<IAuthState, RootState>
             if(getters.isAuthenticated) {
                 commit("setAuthStatus", "pending");
                 try {
-                    await auth.signOut();
+                    await this.auth.signOut();
                 } catch(error) {
                     console.error("Error logging out, forcing logout");
                 }
