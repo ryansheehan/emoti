@@ -17,7 +17,7 @@
 
 <style>
 .leaflet-z-fix {
-    z-index: 400;
+    z-index: 410;
 }
 
 .md-menu-content {

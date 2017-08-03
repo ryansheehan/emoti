@@ -28,7 +28,10 @@
                 </md-button>
                 <transition name="show">
                     <md-whiteframe class="attribution-content-container" v-show="showAttribution">
-                        <div class="attribution-content">© <a target="_blank" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</div>
+                        <div class="attribution-content">
+                            <div>© <a target="_blank" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</div>
+                            <div>"<a target="_blank" href="https://github.com/twitter/twemoji">Twemoji</a>" by <a target="_blank" href="https://about.twitter.com">Twitter</a> is licensed under <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div>
+                        </div>
                     </md-whiteframe>
                 </transition>
             </div>
@@ -74,7 +77,7 @@
     background-color: white;
     overflow: hidden;
     white-space: nowrap;
-    max-width: 250px;
+    max-width: 300px;
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;
@@ -83,6 +86,7 @@
 .attribution-content {
     /*overflow: hidden;*/
     /*text-overflow: clip;*/
+    font-size: smaller;
 }
 
 .show-enter-active, .show-leave-active {
@@ -96,7 +100,7 @@
 
 .attribution-button {
     opacity: 1;
-    margin-right: -2px;
+    /* margin-right: -2px;     */
 }
 
 .switch-enter-active, .switch-leave-active {
