@@ -16,7 +16,6 @@
     "firebase": "^4.1.5",
     "geofire": "^4.1.2",
     "leaflet": "^1.1.0",
-    "openlayers": "^4.2.0",
     "promise-polyfill": "^6.0.2",
     "twemoji": "^2.4.1",
     "vue": "^2.4.2",
@@ -30,7 +29,6 @@
   "devDependencies": {
     "@types/emojione": "^2.2.0",
     "@types/leaflet": "^1.0.67",
-    "@types/openlayers": "^4.1.4",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.1.1",
