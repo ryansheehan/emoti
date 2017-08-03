@@ -7,15 +7,15 @@
                 :zoom="zoom"
                 :center="center"
                 :options="leafletOptions"
-                v-on:l-moveend="onMoveEnd">
+                @l-moveend="onMoveEnd">
                 <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-                <!-- <v-marker-cluster> -->
-                    <v-marker   v-for="emoti in emotis"
-                                :key="emoti.key"
-                                :lat-lng="emoti.location.toLatLng()"
+                <v-marker-cluster v-for="loc in emotis" :key="loc.key">
+                    <v-marker   v-for="emoti in loc.emotes"
+                                :key="emoti.emote"
+                                :lat-lng="loc.location"
                                 :icon="getIcon(emoti.emote)">
                     </v-marker>
-                <!-- </v-marker-cluster> -->
+                </v-marker-cluster>
             </v-map>
         </div>
         <div class="map-control-overlay">
@@ -48,6 +48,9 @@
 </template>
 
 <style scoped>
+@import "~leaflet.markercluster/dist/MarkerCluster.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+
 .map-control-overlay {
     width: 100%;
     height: 100%;

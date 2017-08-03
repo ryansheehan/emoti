@@ -1,3 +1,4 @@
+import Vue from "vue";
 import Vuex from "vuex";
 import { database } from "firebase";
 import GeoFire, { IGeoQuery, IGeoCallbackRegistration, IGeoQueryCriteria } from "geofire";
@@ -12,12 +13,26 @@ interface IFirebaseEmoti {
     uid: string;
 }
 
-export interface IEmoti {
-    key?: string | undefined | null;
+
+export interface IEmotiLocation {
+    location: Location;
+    key: string; // a cheat that is helpful for the rendering key
+    emotes: {
+        emote: string,
+        data: IEmoti[]
+    }[];
+}
+
+
+export interface IEmotiData {
     location: Location;
     emote: string;
     timestamp: number;
     uid: string;
+}
+
+export interface IEmoti extends IEmotiData {
+    key: string;
 }
 
 export interface IArea {
@@ -26,7 +41,9 @@ export interface IArea {
 }
 
 export interface IEmotiState {
-    emotis: IEmoti[];
+    emotiLocMap : {[loc: string]: {[emoji:string]: IEmoti[]}};
+    emotiKeyMap: {[key:string]: string}; // map key => loc
+    // emotis: IEmoti[];
     watchArea: IArea;
 }
 
@@ -39,12 +56,15 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
     private areaQuery: IGeoQuery | null = null;
     private newEmotiRegistration: IGeoCallbackRegistration | null = null;
+    private removeEmotiRegistration: IGeoCallbackRegistration | null = null;
 
     private isRadiusInitialized: boolean = false;
     private isCenterInitialized: boolean = false;
 
     state: IEmotiState = {
-        emotis: [],
+        emotiLocMap: {},
+        emotiKeyMap: {},
+        // emotis: [],
         watchArea: {
             center: new Location({ lat: 0, lng: 0 }),
             radius: 0,
@@ -58,15 +78,34 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
         radius(state:IEmotiState): number {
             return state.watchArea.radius;
+        },
+
+        emotis(state:IEmotiState): IEmotiLocation[] {
+            return Object.keys(state.emotiLocMap)
+            .map((locKey:string)=> {
+                const location:Location = Location.parse(locKey);
+                const locData: {[emoji:string]: IEmoti[]} = state.emotiLocMap[locKey];
+                const emotes:{emote: string, data: IEmoti[]}[] = Object.keys(locData).map((emote: string)=> ({
+                    emote,
+                    data: locData[emote]
+                }));
+
+                return { location, emotes, key: location.toString() };
+            });
         }
     };
 
     actions: Vuex.ActionTree<IEmotiState, RootState> = {
-        "createWatchArea": ({ commit }, area: IArea): void => {
+        "createWatchArea": ({ commit, state }, area: IArea): void => {
             // cancel any existing callbacks
             if (this.newEmotiRegistration) {
                 this.newEmotiRegistration.cancel();
                 this.newEmotiRegistration = null;
+            }
+
+            if (this.removeEmotiRegistration) {
+                this.removeEmotiRegistration.cancel();
+                this.removeEmotiRegistration = null;
             }
 
             // cancel any active query
@@ -108,8 +147,14 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
                 }
             );
 
-            // this.areaQuery.on("key_exited", (key: string, location: [number, number], distance: number): void => {
-            // });
+            this.removeEmotiRegistration = this.areaQuery.on("key_exited",
+                (key: string, location: [number, number], distance: number): void => {
+                    const loc: Location = Location.fromLatLng(location);
+                    if(state.emotiLocMap[loc.toString()]) {
+                        commit("removeLocation", loc);
+                    }
+                }
+            );
         },
 
         "updateRadius": ({ commit, dispatch, state }, radius: number): void => {
@@ -192,7 +237,74 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
 
     mutations: Vuex.MutationTree<IEmotiState> = {
         "addEmoti": (state: IEmotiState, emoti: IEmoti): void => {
-            state.emotis = [...state.emotis, emoti];
+            // state.emotis = [...state.emotis, emoti];
+
+            const locStr:string = emoti.location.toString();
+
+            let locEntry: {[emoji:string]: IEmoti[]} = state.emotiLocMap[locStr];
+            if(!locEntry) {
+                locEntry = {};
+                // state.emotiLocMap[locStr] = locEntry;
+                Vue.set(state.emotiLocMap, locStr, locEntry);
+            }
+
+            let emoteBlock: IEmoti[] = locEntry[emoti.emote];
+            if(!emoteBlock) {
+                emoteBlock = [];
+                // locEntry[emoti.emote] = emoteBlock;
+                Vue.set(state.emotiLocMap[locStr], emoti.emote, emoteBlock);
+            }
+
+            Vue.set(state.emotiLocMap[locStr], emoti.emote, [...emoteBlock, emoti]);
+            // state.emotiLocMap[locStr][emoti.emote] = [...emoteBlock, emoti];
+            Vue.set(state.emotiKeyMap, emoti.key, locStr);
+            // state.emotiKeyMap[emoti.key] = locStr;
+        },
+
+        "removeEmoti": (state:IEmotiState, payload: {emoti: IEmoti, index: number}): void => {
+            const {emoti, index} = payload;
+            const locStr: string = state.emotiKeyMap[emoti.key];
+            const collection: IEmoti[] = state.emotiLocMap[locStr][emoti.emote];
+            // state.emotiLocMap[locStr][emoti.emote] = [
+            //     ...collection.slice(0, index),
+            //     ...collection.slice(index + 1)
+            // ];
+            Vue.set(state.emotiLocMap[locStr], emoti.emote, [
+                ...collection.slice(0, index),
+                ...collection.slice(index + 1)
+            ]);
+
+            // clean up any empty constructs
+            if(state.emotiLocMap[locStr][emoti.emote].length === 0) {
+                // delete state.emotiLocMap[locStr][emoti.emote];
+                Vue.delete(state.emotiLocMap[locStr], emoti.emote);
+                if(Object.keys(state.emotiLocMap[locStr]).length === 0) {
+                    // delete state.emotiLocMap[locStr];
+                    Vue.delete(state.emotiLocMap, locStr);
+                }
+            }
+
+            // delete key
+            // delete state.emotiKeyMap[emoti.key];
+            Vue.delete(state.emotiKeyMap, emoti.key);
+        },
+
+        "removeLocation": (state:IEmotiState, location:Location): void => {
+            const locStr: string = location.toString();
+
+            // get and remove all keys at loc
+            const emoties:IEmoti[] = [];
+            for(let emote in state.emotiLocMap[locStr]) {
+                if(state.emotiLocMap[locStr][emote]) {
+                    emoties.push(...state.emotiLocMap[locStr][emote]);
+                }
+            }
+            // emoties.forEach(emoti=>delete state.emotiKeyMap[emoti.key]);
+            emoties.forEach(emoti=>Vue.delete(state.emotiKeyMap, emoti.key));
+
+            // delete the loc
+            // delete state.emotiLocMap[locStr];
+            Vue.delete(state.emotiLocMap, locStr);
         },
 
         "setCenter": (state: IEmotiState, center: Location): void => {
@@ -204,7 +316,8 @@ export class EmotiModule<RootState> implements Vuex.Module<IEmotiState, RootStat
         },
 
         "clearEmoti": (state: IEmotiState): void => {
-            state.emotis = [];
+            state.emotiLocMap = {};
+            state.emotiKeyMap = {};
         }
     };
 }

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Component, mapActions, mapGetters, mapState, NoCache } from "./vue-class-helpers";
-import { IEmoti } from "../store/emoti.store";
+import { IEmotiData } from "../store/emoti.store";
 import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 // import { Map, TileLayer } from "vue2-leaflet";
@@ -43,9 +43,9 @@ export default class EmoteEntry extends Vue {
     emote: Emoji = shortNameEmoji["slight_smile"];
 
     @NoCache
-    get emoti(): Promise<IEmoti> {
+    get emoti(): Promise<IEmotiData> {
 
-        return new Promise<IEmoti>(async (resolve) => {
+        return new Promise<IEmotiData>(async (resolve) => {
 
             let location: Location = new Location({lat:0, lng: 0});
             try {
@@ -65,8 +65,9 @@ export default class EmoteEntry extends Vue {
 
     uid:string;
 
-    currentLocation: Location = new Location({lat:33.2044240, lng:-96.9498580});
-    currentZoom: number = 16;
+    currentLocation: Location | null = null;
+
+    currentZoom: number = 13;
 
     // used in the template
     // tslint:disable-next-line:no-unused-variable
@@ -75,6 +76,12 @@ export default class EmoteEntry extends Vue {
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(shortNameEmoji);
 
     created():void {
-        (async ():Promise<any> => this.currentLocation = await Location.current())();
+        Location.current()
+        .then(l=>this.currentLocation = l)
+        .catch(e=>{
+            console.warn(e);
+            console.warn("Falling back to default location");
+            this.currentLocation = new Location({lat:33.078715, lng:-96.808306});
+        })
     }
 }
