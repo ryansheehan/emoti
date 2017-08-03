@@ -75,13 +75,7 @@ export default class LMap extends Vue {
         this.updateCenterRadius(e.target.getCenter(), e.target.getBounds()._northEast, e.target.distance.bind(e.target));
     }
 
-    private updateCenterRadius(_center:Location, _corner:Location, dist:(a:Location, b:Location)=>number) {
-        // console.log("updateCenterRadius()");
-        // console.log("center: ", _center);
-        // console.log("corner: ", _corner);
-        // console.log("dist: ", dist);
-        // console.log("dist-value: ", dist(_center, _corner));
-
+    private updateCenterRadius(_center:Location, _corner:Location, dist:(a:Location, b:Location)=>number): void {
         const r:number = Math.floor(dist(_center, _corner) / 1000.0);
         this.updateCenter(new Location(_center));
         this.updateRadius(r);
@@ -104,12 +98,5 @@ export default class LMap extends Vue {
 
             return r;
         }, this.emojiIcons);
-
-        //this.updateCenter(this.center);
-
-        // Location.current().then(l => {
-        //     this.updateCenter(l);
-        //     this.center = l;
-        // });
     }
 }

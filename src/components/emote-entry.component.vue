@@ -11,19 +11,12 @@
             </form>
         </div>
         <div class="emote-map" :class="{'emote-map-conditional-center': !currentLocation}">
-            <l-map  v-show="currentLocation"
+            <emote-map  v-show="currentLocation"
                     :center="currentLocation"
                     :zoom="currentZoom"
                     :emojiOptions="emojiOptions">
-            </l-map>
+            </emote-map>
             <md-spinner v-show="!currentLocation" :md-size="150" md-indeterminate></md-spinner>
-
-
-            <!-- <l-map v-if="currentLocation"
-                    :center="currentLocation"
-                    :emojiOptions="emojiOptions">
-            </l-map> -->
-            <!-- <md-spinner :md-size="150" md-indeterminate></md-spinner> -->
         </v-map>
         </div>
     </div>

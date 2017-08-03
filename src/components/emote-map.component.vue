@@ -1,7 +1,7 @@
-<script src="./l-map.component.ts" lang="ts"></script>
+<script src="./emote-map.component.ts" lang="ts"></script>
 
 <template>
-    <div class="l-map">
+    <div class="emote-map">
         <div class="leaflet-slot">
             <v-map
                 :zoom="zoom"
@@ -146,7 +146,7 @@
     max-height: 36px !important;
 }
 
-.l-map {
+.emote-map {
     position: relative;
     height: 100%;
 }

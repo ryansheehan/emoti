@@ -5,7 +5,7 @@ import { IAuthState } from "../store/auth.store";
 import EmojiPicker from "./emoji-picker.component.vue";
 // import { Map, TileLayer } from "vue2-leaflet";
 // import OlMap from "./ol-map.component.vue";
-import LMap from "./l-map.component.vue";
+import EmoteMap from "./emote-map.component.vue";
 import { Emoji, shortNameEmoji, getEmojiSvgPath } from "../emoji-table";
 import Location from "../location";
 import { Map, TileLayer } from "vue2-leaflet";
@@ -21,7 +21,7 @@ import { Map, TileLayer } from "vue2-leaflet";
     components: {
         EmojiPicker,
         // OlMap,
-        LMap,
+        EmoteMap,
         // "v-map": Map,
         // "v-tilelayer": TileLayer
     },
