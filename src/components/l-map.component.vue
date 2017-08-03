@@ -9,7 +9,7 @@
                 :options="leafletOptions"
                 @l-moveend="onMoveEnd">
                 <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-                <v-marker-cluster v-for="loc in emotis" :key="loc.location">
+                <v-marker-cluster v-for="loc in emotis" :key="loc.key">
                     <v-marker   v-for="emoti in loc.emotes"
                                 :key="emoti.emote"
                                 :lat-lng="loc.location"
