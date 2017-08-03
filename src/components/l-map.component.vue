@@ -19,7 +19,7 @@
             </v-map>
         </div>
         <div class="map-control-overlay">
-            <div class="attribution-container">
+            <div class="attribution-container leaflet-z-fix">
                 <md-button class="attribution-button md-icon-button md-raised md-accent" @click.native="showAttribution=!showAttribution">
                     <transition name="switch">
                         <md-icon v-if="showAttribution" key="expand-icon">navigate_before</md-icon>
@@ -33,7 +33,7 @@
                 </transition>
             </div>
             <div class="spacer"/>
-            <div class="center-zoom-container">
+            <div class="center-zoom-container leaflet-z-fix">
                 <md-whiteframe class="center-container">
                     <md-button class="center-zoom-button" @click.native="recenter()"><md-icon>gps_fixed</md-icon></md-button>
                 </md-whiteframe>
@@ -66,7 +66,7 @@
     flex-flow: row wrap;
     align-items: center;
     margin: 6px;
-    z-index: 400;
+    /* z-index: 400; */
 }
 
 .attribution-content-container {
@@ -118,7 +118,7 @@
     flex-flow: column nowrap;
     position: relative;
     margin: 6px;
-    z-index: 400;
+    /* z-index: 400; */
 }
 
 .center-container {
