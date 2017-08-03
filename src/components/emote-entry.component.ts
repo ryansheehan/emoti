@@ -65,8 +65,9 @@ export default class EmoteEntry extends Vue {
 
     uid:string;
 
-    currentLocation: Location = new Location({lat:33.2044240, lng:-96.9498580});
-    currentZoom: number = 16;
+    currentLocation: Location | null = null;
+
+    currentZoom: number = 13;
 
     // used in the template
     // tslint:disable-next-line:no-unused-variable
@@ -75,6 +76,12 @@ export default class EmoteEntry extends Vue {
         ({ grinning, slight_smile, neutral_face, frowning2, angry }))(shortNameEmoji);
 
     created():void {
-        (async ():Promise<any> => this.currentLocation = await Location.current())();
+        Location.current()
+        .then(l=>this.currentLocation = l)
+        .catch(e=>{
+            console.warn(e);
+            console.warn("Falling back to default location");
+            this.currentLocation = new Location({lat:33.078715, lng:-96.808306});
+        })
     }
 }

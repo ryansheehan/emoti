@@ -1,10 +1,10 @@
 import Vue from "vue";
-import { Component, Prop, NoCache, mapGetters, mapActions, mapState } from "./vue-class-helpers";
+import { Component, Prop, Watch, NoCache, mapGetters, mapActions, mapState } from "./vue-class-helpers";
 import { Map, TileLayer, Marker } from "vue2-leaflet";
 import Vue2LeafletMarkercluster from "vue2-leaflet-markercluster";
 import L from "leaflet";
 import Location from "../location";
-import { IEmoti } from "../store/emoti.store";
+import { IEmotiLocation } from "../store/emoti.store";
 import { Emoji, emojiCodePoint } from "../emoji-table";
 
 import "leaflet/dist/leaflet.css";
@@ -24,13 +24,12 @@ type flyToFn = (location: Location, zoom?: number, opts?: any)=> any;
     },
 
     computed: {
-        ...mapState("emoti", ["emotis"])
+        ...mapGetters("emoti", ["emotis"])
     }
 })
 export default class LMap extends Vue {
-    updateCenter:(c:Location)=> void; // mapAction
-    updateRadius:(r:number)=> void; // mapAction
-    emotis: IEmoti[]; // mapState
+    updateCenter:(c:Location)=> void; // mapActions
+    updateRadius:(r:number)=> void; // mapActions
 
     @Prop()
     emojiOptions: { [shortname: string]: string };
@@ -43,12 +42,16 @@ export default class LMap extends Vue {
     };
 
     showAttribution: boolean = false;
-    // center: Location = new Location({lat:33.2044240, lng:-96.9498580});
-    // center: Location = new Location({lat:0, lng:0});
 
-    zoom: number = 13;
+    @Prop({
+        default: 13
+    })
+    zoom: number;
 
-    center: Location = new Location({lat:0, lng:0});
+    @Prop({
+        default: ()=>new Location({lat:0, lng:0})
+    })
+    center: Location;
 
     adjustZoom(relativeAmount: number): void {
         this.zoom += relativeAmount;
@@ -69,12 +72,18 @@ export default class LMap extends Vue {
         if(e.target.flyTo) {
             this.flyTo = e.target.flyTo.bind(e.target);
         }
+        this.updateCenterRadius(e.target.getCenter(), e.target.getBounds()._northEast, e.target.distance.bind(e.target));
+    }
 
-        const c:Location = e.target.getCenter();
-        const bounds: {_northEast: Location, _southWest: Location} = e.target.getBounds();
-        const r:number = Math.floor(e.target.distance(c, bounds._northEast) / 1000.0);
+    private updateCenterRadius(_center:Location, _corner:Location, dist:(a:Location, b:Location)=>number) {
+        // console.log("updateCenterRadius()");
+        // console.log("center: ", _center);
+        // console.log("corner: ", _corner);
+        // console.log("dist: ", dist);
+        // console.log("dist-value: ", dist(_center, _corner));
 
-        this.updateCenter(new Location(c));
+        const r:number = Math.floor(dist(_center, _corner) / 1000.0);
+        this.updateCenter(new Location(_center));
         this.updateRadius(r);
     }
 
@@ -96,9 +105,11 @@ export default class LMap extends Vue {
             return r;
         }, this.emojiIcons);
 
-        Location.current().then(l => {
-            this.updateCenter(l);
-            this.center = l;
-        });
+        //this.updateCenter(this.center);
+
+        // Location.current().then(l => {
+        //     this.updateCenter(l);
+        //     this.center = l;
+        // });
     }
 }
