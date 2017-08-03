@@ -22,6 +22,8 @@ export default class Location implements ILocation {
                     resolve(new Location({lat,lng}));
                 }, error=> {
                     reject(error);
+                }, {
+                    enableHighAccuracy: false
                 });
             } else {
                 reject("Geolocation is not available on this device.");
