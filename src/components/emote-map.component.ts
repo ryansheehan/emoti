@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch, NoCache, mapGetters, mapActions, mapState } from "./vue-class-helpers";
 import { Map, TileLayer, Marker } from "vue2-leaflet";
-import Vue2LeafletMarkercluster from "vue2-leaflet-markercluster";
+import MarkerCluster from "./marker-cluster.component.vue";
 import L from "leaflet";
 import Location from "../location";
 import { IEmotiLocation } from "../store/emoti.store";
@@ -16,7 +16,7 @@ type flyToFn = (location: Location, zoom?: number, opts?: any)=> any;
         "v-map": Map,
         "v-tilelayer": TileLayer,
         "v-marker": Marker,
-        "v-marker-cluster": Vue2LeafletMarkercluster
+        "v-marker-cluster": MarkerCluster
     },
 
     methods: {
